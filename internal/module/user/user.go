@@ -1,14 +1,15 @@
 package user
 
 import (
-	"github.com/aleale2121/go-demo/internal/adapter/storage/persistence/user"
-	"github.com/aleale2121/go-demo/internal/constant/model"
-	"github.com/aleale2121/go-demo/internal/repository"
+	"template/internal/adapter/repository"
+	"template/internal/adapter/storage/persistence/user"
+	"template/internal/constant/model"
+
 	"github.com/gofrs/uuid"
 )
 
 // Usecase interface contains function of business logic for domian USer
-type UseCase interface {
+type Usecase interface {
 	CreateUser(user *model.User) (*model.User, error)
 	GetUserById(id uuid.UUID) (*model.User, error)
 	DeleteUser(id uuid.UUID) error
@@ -34,14 +35,23 @@ func (s *service) CreateUser(user *model.User) (*model.User, error) {
 	err := s.usrRepo.Encrypt(user)
 
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-
-	usr, err := s.usrPersist.InsertUser(user)
+	usr, err := s.usrPersist.CreateUser(user)
 	if err != nil {
 		return nil, err
 	}
 
 	return usr, nil
+}
+
+func (s *service) GetUserById(id uuid.UUID) (*model.User, error) {
+	return nil, nil
+}
+func (s *service) DeleteUser(id uuid.UUID) error {
+	return nil
+}
+func (s *service) GetUsers() ([]model.User, error) {
+	return []model.User{}, nil
 }

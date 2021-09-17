@@ -3,7 +3,8 @@ package user
 import (
 	"log"
 
-	"github.com/aleale2121/go-demo/internal/constant/model"
+	"template/internal/constant/model"
+
 	uuid "github.com/satori/go.uuid"
 	"gorm.io/gorm"
 )
@@ -12,7 +13,7 @@ type userGormRepo struct {
 	conn *gorm.DB
 }
 
-func InitUserPersistence(db *gorm.DB) UserStorage {
+func UserInit(db *gorm.DB) UserStorage {
 	return &userGormRepo{conn: db}
 }
 
@@ -42,9 +43,11 @@ func (repo userGormRepo) GetUserById(id uuid.UUID) (*model.User, error) {
 	err := repo.conn.First(user, id).Error
 	if err != nil {
 		if err == gorm.ErrRecordNotFound {
-			return nil, errors.IDNotFound
+			// return nil, errors.IDNotFound
+			return nil, nil
 		}
-		return nil, errors.ErrorUnableToFetch
+		// return nil, errors.ErrorUnableToFetch
+		return nil, nil
 	}
 	return user, nil
 }
