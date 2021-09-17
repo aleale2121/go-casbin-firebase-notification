@@ -1,7 +1,9 @@
 package repository
 
 import (
-	"github.com/aleale2121/go-demo/internal/constant/model"
+	"template/internal/constant/errors"
+	"template/internal/constant/model"
+
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -25,7 +27,7 @@ func (ur *userRepository) Encrypt(user *model.User) (err error) {
 	if user.Password != "" {
 		bytes, err := bcrypt.GenerateFromPassword([]byte(user.Password), 8)
 		if err != nil {
-			return err
+			return errors.ErrPasswordEncryption
 		}
 		user.Password = string(bytes)
 	}
