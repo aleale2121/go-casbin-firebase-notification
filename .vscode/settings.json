@@ -1,0 +1,7 @@
+{
+    "go.inferGopath": false,
+    "files.exclude": {
+        "internal/glue/routing": true,
+        "internal/module/user": true
+    }
+}
