@@ -2,14 +2,15 @@ package user
 
 import (
 	"errors"
-	"log"
 	"net/http"
+	errModel "template/internal/constant/errors"
 	"template/internal/constant/model"
 	"template/internal/module/user"
 
 	"github.com/gin-gonic/gin"
 	ut "github.com/go-playground/universal-translator"
 	"github.com/go-playground/validator/v10"
+	uuid "github.com/satori/go.uuid"
 )
 
 // UserHandler contans a function of handlers for the domian file
@@ -40,28 +41,22 @@ func (uh userHandler) CreateUser(c *gin.Context) {
 	var insertUser model.User
 
 	if err := c.ShouldBind(&insertUser); err != nil {
-		
+
 		var verr validator.ValidationErrors
 
 		if errors.As(err, &verr) {
-			log.Println(err)
-			log.Println(err)
-			log.Println(err)
-			log.Println(err)
-			log.Println(err)
-			log.Println(err)
-			log.Println(err)
-			log.Println(err)
-			log.Println(err)
-			c.JSON(http.StatusBadRequest, verr.Translate(uh.trans))
+			c.JSON(http.StatusBadRequest, gin.H{"errors": verr.Translate(uh.trans)})
 			return
 		}
-	}
+		c.JSON(http.StatusBadRequest, gin.H{"errors": errModel.NewErrorResponse(errModel.ErrUnknown)})
+		return
 
+	}
 	user, err := uh.userUsecase.CreateUser(&insertUser)
 
 	if err != nil {
-		log.Println(err)
+		c.JSON(http.StatusBadRequest, gin.H{"errors": errModel.NewErrorResponse(err)})
+		return
 	}
 
 	c.JSON(http.StatusCreated, gin.H{"user": user})
@@ -70,18 +65,54 @@ func (uh userHandler) CreateUser(c *gin.Context) {
 
 // GetUserById gets a user by id
 func (uh userHandler) GetUserById(c *gin.Context) {
-	c.JSON(http.StatusCreated, gin.H{})
+
+	ID := c.Param("id")
+
+	id, err := uuid.FromString(ID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"errors": errModel.NewErrorResponse(err)})
+		return
+	}
+
+	user, err := uh.userUsecase.GetUserById(id)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"errors": errModel.NewErrorResponse(err)})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"user": user})
 	return
 }
 
 // DeleteUser deletes user by id
 func (uh userHandler) DeleteUser(c *gin.Context) {
-	c.JSON(http.StatusCreated, gin.H{})
+	ID := c.Param("id")
+
+	id, err := uuid.FromString(ID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"errors": errModel.NewErrorResponse(err)})
+		return
+	}
+
+	err = uh.userUsecase.DeleteUser(id)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"errors": errModel.NewErrorResponse(err)})
+		return
+	}
+
+	c.JSON(http.StatusNoContent, gin.H{})
 	return
 }
 
 // GetUsers gets a list of users
 func (uh userHandler) GetUsers(c *gin.Context) {
-	c.JSON(http.StatusCreated, gin.H{})
+	users, err := uh.userUsecase.GetUsers()
+
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"errors": errModel.NewErrorResponse(err)})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"users": users})
 	return
 }

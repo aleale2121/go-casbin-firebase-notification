@@ -9,14 +9,14 @@ import (
 
 type User struct {
 	ID         uuid.UUID      `json:"id" gorm:"type:uuid;primary_key;default:uuid_generate_v4()"`
-	UserName   string         `json:"username" binding:"required"`
-	Password   string         `json:"password"`
-	Phone      string         `json:"phone"`
-	FirstName  string         `json:"first_name"`
+	Username   string         `json:"username" binding:"required"`
+	Password   string         `json:"password" binding:"required,min=8"`
+	Phone      string         `json:"phone" binding:"required"`
+	FirstName  string         `json:"first_name" binding:"required"`
 	MiddleName string         `json:"middle_name"`
-	LastName   string         `json:"last_name"`
-	Email      string         `json:"email"`
-	RoleName   string         `json:"role_name"`
+	LastName   string         `json:"last_name" binding:"required"`
+	Email      string         `gorm:"unique" json:"email" binding:"required,email"`
+	RoleName   string         `json:"role_name" binding:"required"`
 	CreatedAt  time.Time      `json:"created_at,omitempty"`
 	UpdatedAt  time.Time      `json:"updated_at,omitempty"`
 	DeletedAt  gorm.DeletedAt `json:"-" gorm:"index"`
