@@ -1,6 +1,6 @@
 package main
 
-import "github.com/aleale2121/go-demo/initiator"
+import "template/initiator"
 
 func main() {
 	initiator.Initialize()
