@@ -5,7 +5,7 @@ import (
 	"template/internal/adapter/storage/persistence/user"
 	"template/internal/constant/model"
 
-	"github.com/gofrs/uuid"
+	uuid "github.com/satori/go.uuid"
 )
 
 // Usecase interface contains function of business logic for domian USer
@@ -47,11 +47,16 @@ func (s *service) CreateUser(user *model.User) (*model.User, error) {
 }
 
 func (s *service) GetUserById(id uuid.UUID) (*model.User, error) {
-	return nil, nil
+	usr, err := s.usrPersist.GetUserById(id)
+	if err != nil {
+		return nil, err
+	}
+
+	return usr, nil
 }
 func (s *service) DeleteUser(id uuid.UUID) error {
-	return nil
+	return s.usrPersist.DeleteUser(id)
 }
 func (s *service) GetUsers() ([]model.User, error) {
-	return []model.User{}, nil
+	return s.usrPersist.GetUsers()
 }

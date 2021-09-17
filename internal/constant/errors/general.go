@@ -3,9 +3,11 @@ package errors
 import "errors"
 
 var (
+	ErrUnknown                        = errors.New("Unknown error")
 	ErrPasswordEncryption             = errors.New("could not encrypt password")
 	ErrUnableToSave                   = errors.New("unable to save data")
 	ErrForgotEmail                    = errors.New("email is required")
+	ErrInputValidation                = errors.New("Error input validation")
 	ErrUnableToDelete                 = errors.New("unable to delete data")
 	ErrUnableToFetch                  = errors.New("unable to fetch data")
 	ErrIDNotFound                     = errors.New("id not found ")
@@ -36,7 +38,9 @@ var (
 
 // Descriptions error description
 var Descriptions = map[error]string{
+	ErrUnknown:                        "Unown error",
 	ErrForgotEmail:                    "Email is forgotten",
+	ErrInputValidation:                "Error input validation",
 	ErrIDNotFound:                     "Id not found",
 	ErrUnableToSave:                   "unable to save",
 	ErrUnableToDelete:                 "unable to delete",
@@ -58,7 +62,6 @@ var Descriptions = map[error]string{
 
 // StatusCodes response error HTTP status code
 var StatusCodes = map[error]int{
-
 	ErrInvalidRequest:                 400,
 	ErrUnauthorizedClient:             401,
 	ErrAccessDenied:                   403,
@@ -81,7 +84,10 @@ var StatusCodes = map[error]int{
 
 // StatusCodes response error HTTP status code
 var ErrCodes = map[error]int{
+
+	ErrUnknown:                        5001,
 	ErrPasswordEncryption:             5000,
+	ErrInvalidAccessToken:             4017,
 	ErrInvalidRequest:                 4000,
 	ErrUnauthorizedClient:             4001,
 	ErrAccessDenied:                   4002,

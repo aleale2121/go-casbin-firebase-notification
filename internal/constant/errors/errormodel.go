@@ -14,3 +14,4 @@ func NewErrorResponse(err error) ErrorModel {
 		ErrorCode:  strconv.Itoa(ErrCodes[err]),
 	}
 }
+	
