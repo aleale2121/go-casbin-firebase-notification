@@ -3,6 +3,7 @@ module template
 go 1.16
 
 require (
+	github.com/gin-gonic/gin v1.7.4
 	github.com/pilagod/gorm-cursor-paginator/v2 v2.1.0 // indirect
 	github.com/satori/go.uuid v1.2.0
 	github.com/shopspring/decimal v0.0.0-20200227202807-02e2044944cc
