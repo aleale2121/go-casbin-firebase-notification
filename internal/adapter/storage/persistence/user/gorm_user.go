@@ -1,9 +1,9 @@
 package user
 
 import (
-	"template/internal/constant/errors"
-	"template/internal/constant/model"
+	"log"
 
+	"github.com/aleale2121/go-demo/internal/constant/model"
 	uuid "github.com/satori/go.uuid"
 	"gorm.io/gorm"
 )
@@ -19,10 +19,8 @@ func InitUserPersistence(db *gorm.DB) UserStorage {
 func (repo userGormRepo) CreateUser(usr *model.User) (*model.User, error) {
 	err := repo.conn.Create(&usr).Error
 	if err != nil {
-		if err == gorm.ErrRecordNotFound {
-			// return nil, errors
-		}
-
+		log.Println(err)
+		return nil, err
 		// return nil, errors.ErrorUnableToSave
 	}
 	return usr, nil

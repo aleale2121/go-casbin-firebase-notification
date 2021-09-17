@@ -2,12 +2,13 @@ package errors
 
 import "errors"
 
-var(
-	ErrUnableToSave  = errors.New("unable to save data")
-	ErrForgotEmail = errors.New("email is required")
- 	ErrUnableToDelete  = errors.New("unable to delete data")
-	ErrUnableToFetch  = errors.New("unable to fetch data")
- 	ErrIDNotFound  = errors.New("id not found ")
+var (
+	ErrPasswordEncryption             = errors.New("could not encrypt password")
+	ErrUnableToSave                   = errors.New("unable to save data")
+	ErrForgotEmail                    = errors.New("email is required")
+	ErrUnableToDelete                 = errors.New("unable to delete data")
+	ErrUnableToFetch                  = errors.New("unable to fetch data")
+	ErrIDNotFound                     = errors.New("id not found ")
 	ErrInvalidRequest                 = errors.New("invalid_request")
 	ErrUnauthorizedClient             = errors.New("unauthorized_client")
 	ErrAccessDenied                   = errors.New("access_denied")
@@ -32,13 +33,14 @@ var(
 	ErrMissingCodeChallenge = errors.New("missing code challenge")
 	ErrInvalidCodeChallenge = errors.New("invalid code challenge")
 )
+
 // Descriptions error description
 var Descriptions = map[error]string{
-	ErrForgotEmail:"Email is forgotten",
-	ErrIDNotFound:"Id not found",
-	ErrUnableToSave:"unable to save",
-	ErrUnableToDelete:"unable to delete",
-	ErrUnableToFetch:"unanble to fetch",
+	ErrForgotEmail:                    "Email is forgotten",
+	ErrIDNotFound:                     "Id not found",
+	ErrUnableToSave:                   "unable to save",
+	ErrUnableToDelete:                 "unable to delete",
+	ErrUnableToFetch:                  "unanble to fetch",
 	ErrInvalidRequest:                 "The request is missing a required parameter, includes an invalid parameter value, includes a parameter more than once, or is otherwise malformed",
 	ErrUnauthorizedClient:             "The client is not authorized to request an authorization code using this method",
 	ErrAccessDenied:                   "The resource owner or authorization server denied the request",
@@ -70,15 +72,16 @@ var StatusCodes = map[error]int{
 	ErrCodeChallengeRquired:           400,
 	ErrUnsupportedCodeChallengeMethod: 400,
 	ErrInvalidCodeChallengeLen:        400,
-	ErrIDNotFound:					   404,
+	ErrIDNotFound:                     404,
 	ErrForgotEmail:                    422,
-	ErrUnableToSave:				   422,
-	ErrUnableToDelete:				   422,
-	ErrUnableToFetch:				   422,
+	ErrUnableToSave:                   422,
+	ErrUnableToDelete:                 422,
+	ErrUnableToFetch:                  422,
 }
 
 // StatusCodes response error HTTP status code
 var ErrCodes = map[error]int{
+	ErrPasswordEncryption:             5000,
 	ErrInvalidRequest:                 4000,
 	ErrUnauthorizedClient:             4001,
 	ErrAccessDenied:                   4002,
@@ -92,9 +95,8 @@ var ErrCodes = map[error]int{
 	ErrCodeChallengeRquired:           4010,
 	ErrUnsupportedCodeChallengeMethod: 4011,
 	ErrInvalidCodeChallengeLen:        4012,
-	ErrIDNotFound:					   4013,
-	ErrUnableToSave:				   4014,
-	ErrUnableToDelete:				   4015,
-	ErrUnableToFetch:				   4016,
-
+	ErrIDNotFound:                     4013,
+	ErrUnableToSave:                   4014,
+	ErrUnableToDelete:                 4015,
+	ErrUnableToFetch:                  4016,
 }

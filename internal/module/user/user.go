@@ -1,8 +1,6 @@
 package user
 
 import (
-	"log"
-
 	"github.com/aleale2121/go-demo/internal/adapter/storage/persistence/user"
 	"github.com/aleale2121/go-demo/internal/constant/model"
 	"github.com/aleale2121/go-demo/internal/repository"
@@ -35,6 +33,15 @@ func (s *service) CreateUser(user *model.User) (*model.User, error) {
 
 	err := s.usrRepo.Encrypt(user)
 
-	log.Println(err)
+	if err != nil {
+		return err
+	}
 
+
+	usr, err := s.usrPersist.InsertUser(user)
+	if err != nil {
+		return nil, err
+	}
+
+	return usr, nil
 }
