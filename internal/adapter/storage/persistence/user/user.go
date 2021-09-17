@@ -1,8 +1,7 @@
-package storage
+package user
 
 import (
-	"template/internal/constant/model"
-
+	"github.com/aleale2121/go-demo/internal/constant/model"
 	uuid "github.com/satori/go.uuid"
 )
 
