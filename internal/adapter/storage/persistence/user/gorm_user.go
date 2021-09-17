@@ -1,7 +1,9 @@
 package user
 
 import (
-	"github.com/aleale2121/go-demo/internal/constant/model"
+	"template/internal/constant/errors"
+	"template/internal/constant/model"
+
 	uuid "github.com/satori/go.uuid"
 	"gorm.io/gorm"
 )
