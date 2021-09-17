@@ -7,11 +7,10 @@ type ErrorModel struct {
 	ErrorMessage     string `json:"errorMessage"`
 	ErrorDescription string `json:"errorDescription"`
 }
-
 func NewErrorResponse(err error) ErrorModel {
 	return ErrorModel{
-		ErrorMessage:     err.Error(),
+		ErrorMessage:       err.Error(),
 		ErrorDescription: Descriptions[err],
-		ErrorCode:        strconv.Itoa(ErrCodes[err]),
+		ErrorCode:  strconv.Itoa(ErrCodes[err]),
 	}
 }

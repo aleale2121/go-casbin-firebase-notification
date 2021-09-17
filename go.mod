@@ -1,4 +1,4 @@
-module github.com/aleale2121/go-demo
+module template
 
 go 1.16
 
