@@ -3,8 +3,12 @@ package user
 import (
 	"template/internal/adapter/repository"
 	"template/internal/adapter/storage/persistence/user"
+
+	appErr "template/internal/constant/errors"
 	"template/internal/constant/model"
 
+	ut "github.com/go-playground/universal-translator"
+	"github.com/go-playground/validator/v10"
 	uuid "github.com/satori/go.uuid"
 )
 
@@ -20,17 +24,29 @@ type Usecase interface {
 type service struct {
 	usrRepo    repository.UserRepository
 	usrPersist user.UserStorage
+	validate   *validator.Validate
+	trans      ut.Translator
 }
 
 // creates a new object with UseCase type
-func Initialize(usrRepo repository.UserRepository, usrPersist user.UserStorage) Usecase {
+func Initialize(usrRepo repository.UserRepository, usrPersist user.UserStorage, validate *validator.Validate, trans ut.Translator) Usecase {
 	return &service{
 		usrRepo,
 		usrPersist,
+		validate,
+		trans,
 	}
 }
 
 func (s *service) CreateUser(companyID uuid.UUID, user *model.User) (*model.User, error) {
+
+	valErr := s.validate.Struct(user)
+
+	if valErr != nil {
+		errs := valErr.(validator.ValidationErrors)
+		valErr := errs.Translate(s.trans)
+		return nil, appErr.NewValErrResponse(valErr)
+	}
 
 	err := s.usrRepo.Encrypt(user)
 

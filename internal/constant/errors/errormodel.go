@@ -1,6 +1,10 @@
 package errors
 
-import "strconv"
+import (
+	"strconv"
+
+	"github.com/go-playground/validator/v10"
+)
 
 type ErrorModel struct {
 	ErrorCode        string `json:"errorCode"`
@@ -8,9 +12,15 @@ type ErrorModel struct {
 	ErrorDescription string `json:"errorDescription"`
 }
 
-type ValErrorModel struct {
-	ErrorCode string            `json:"errorCode"`
-	ValError  map[string]string `json:"validationErrors"`
+// type ValErrorModel struct {
+// 	ErrorCode string            `json:"errorCode"`
+// 	ValError  map[string]string `json:"validationErrors"`
+// }
+
+type ValErr map[string]string
+
+func (e ValErr) Error() string {
+	return "I am a validation error"
 }
 
 func NewErrorResponse(err error) ErrorModel {
@@ -20,20 +30,16 @@ func NewErrorResponse(err error) ErrorModel {
 		ErrorCode:        strconv.Itoa(ErrCodes[err]),
 	}
 }
-// <<<<<<< user-fix
 
-// func NewValidationError(err validator.ValidationErrorsTranslations) ValErrorModel {
-// 	return ValErrorModel{
-// 		ErrorCode: strconv.Itoa(ErrCodes[ErrUnknown]),
-// 		ValError:  err,
-// 	}
-// }
+func NewValErrResponse(err validator.ValidationErrorsTranslations) ValErr {
+	valErr := ValErr{}
+	valErr["errorCode"] = strconv.Itoa(ErrCodes[ErrUnknown])
+	for k, v := range err {
+		valErr[k] = v
+	}
+	return valErr
+}
 
-// func (v ValErrorModel) Error() string {
-// 	return "i am an error"
-// }
-// =======
-// func GetStatusCode(err error) int {
-// 	return StatusCodes[err]
-// }
-// >>>>>>> main
+func GetStatusCode(err error) int {
+	return StatusCodes[err]
+}

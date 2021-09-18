@@ -29,7 +29,14 @@ func (repo companyGormRepo) CreateCompany(company *model.Company) (*model.Compan
 }
 
 func (repo companyGormRepo) GetCompanyById(id uuid.UUID) (*model.Company, error) {
-	return nil, nil
+	company := &model.Company{}
+	err := repo.conn.First(company, id).Error
+	if err != nil {
+		log.Println(err)
+		return nil, errors.ErrUnknown
+	}
+	return company, nil
+
 }
 func (repo companyGormRepo) DeleteUser(id uuid.UUID) error {
 	return nil
