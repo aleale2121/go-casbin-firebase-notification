@@ -8,7 +8,6 @@ import (
 	"template/internal/module/user"
 
 	"github.com/gin-gonic/gin"
-	"github.com/go-playground/validator/v10"
 	uuid "github.com/satori/go.uuid"
 
 	ut "github.com/go-playground/universal-translator"
@@ -51,12 +50,12 @@ func (uh userHandler) CreateUser(c *gin.Context) {
 
 	if err := c.ShouldBind(&insertUser); err != nil {
 
-		var verr validator.ValidationErrors
+		// var verr validator.ValidationErrors
 
-		if errors.As(err, &verr) {
-			c.JSON(http.StatusBadRequest, gin.H{"errors": verr.Translate(uh.trans)})
-			return
-		}
+		// if errors.As(err, &verr) {
+		// 	c.JSON(http.StatusBadRequest, gin.H{"errors": verr.Translate(uh.trans)})
+		// 	return
+		// }
 		c.JSON(http.StatusBadRequest, gin.H{"errors": errModel.NewErrorResponse(errModel.ErrUnknown)})
 		return
 
@@ -64,6 +63,10 @@ func (uh userHandler) CreateUser(c *gin.Context) {
 	user, err := uh.userUsecase.CreateUser(compID, &insertUser)
 
 	if err != nil {
+		if errors.As(err, &errModel.ValErr{}) {
+			c.JSON(http.StatusBadRequest, gin.H{"errors": err})
+			return
+		}
 		c.JSON(http.StatusBadRequest, gin.H{"errors": errModel.NewErrorResponse(err)})
 		return
 	}

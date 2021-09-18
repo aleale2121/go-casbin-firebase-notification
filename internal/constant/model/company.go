@@ -9,8 +9,8 @@ import (
 
 type Company struct {
 	ID        uuid.UUID      `json:"id" gorm:"primaryKey;type:uuid;default:uuid_generate_v4()"`
-	Name      string         `json:"name,omitempty" form:"name" binding:"required"`
-	Phone     string         `json:"phone,omitempty" form:"phone" binding:"required"`
+	Name      string         `json:"name,omitempty" form:"name" validate:"required"`
+	Phone     string         `json:"phone,omitempty" form:"phone" validate:"required"`
 	CreatedAt time.Time      `json:"created_at,omitempty"`
 	UpdatedAt time.Time      `json:"updated_at,omitempty"`
 	DeletedAt gorm.DeletedAt `json:"-" gorm:"index"`
