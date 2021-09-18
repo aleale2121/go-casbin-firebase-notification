@@ -28,8 +28,8 @@ import (
 
 // global validator instance
 var (
-	uni      *ut.UniversalTranslator
-	validate *validator.Validate
+	// uni      *ut.UniversalTranslator
+	// validate *validator.Validate
 	trans    ut.Translator
 )
 
@@ -81,7 +81,7 @@ func Initialize() {
 	usrPersistence := user.UserInit(conn)
 	rolePersistent:=persistence.RoleInit(conn)
     roleUsecase:=roleUsecase.RoleInitialize(rolePersistent)
-    roleHandler:=rlHandler.NewRoleHandler(roleUsecase)
+    roleHandler:=rlHandler.NewRoleHandler(roleUsecase,trans)
 
 	usrRepo := repository.UserInit()
 	usrUsecase := usrUsecase.Initialize(usrRepo, usrPersistence)

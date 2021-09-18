@@ -1,10 +1,14 @@
 package role
 
 import (
+	errs "errors"
+	"net/http"
 	"template/internal/constant/errors"
 	"template/internal/constant/model"
 	"template/internal/module/role"
 
+	ut "github.com/go-playground/universal-translator"
+	"github.com/go-playground/validator"
 	"github.com/gin-gonic/gin"
 )
 
@@ -17,18 +21,28 @@ type RolesHandler interface {
 }
 type rolesHandler struct {
 	roleUseCase        role.UseCase
+	trans       ut.Translator
+
 }
 
-func NewRoleHandler(useCase role.UseCase) RolesHandler {
-	return &rolesHandler{roleUseCase: useCase}
+func NewRoleHandler(useCase role.UseCase,trans ut.Translator) RolesHandler {
+	return &rolesHandler{roleUseCase: useCase,trans: trans}
 }
 func (n rolesHandler) MiddleWareValidateRole(c *gin.Context) {
 	roleX := model.Role{}
 	err := c.Bind(&roleX)
 	if err != nil {
-		c.JSON(422,err)
+		
+		var verr validator.ValidationErrors
+
+		if errs.As(err, &verr) {
+			c.JSON(http.StatusBadRequest, gin.H{"errors": verr.Translate(n.trans)})
+			return
+		}
+		c.JSON(http.StatusBadRequest, gin.H{"errors": errors.NewErrorResponse(errors.ErrUnknown)})
 		return
 	}
+
 	c.Set("x-role", roleX)
 	c.Next()
 }
