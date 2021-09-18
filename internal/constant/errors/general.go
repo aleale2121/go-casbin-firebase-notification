@@ -3,11 +3,11 @@ package errors
 import "errors"
 
 var (
-	ErrUnknown                        = errors.New("Unknown error")
+	ErrUnknown                        = errors.New("unknown error")
 	ErrPasswordEncryption             = errors.New("could not encrypt password")
 	ErrUnableToSave                   = errors.New("unable to save data")
 	ErrForgotEmail                    = errors.New("email is required")
-	ErrInputValidation                = errors.New("Error input validation")
+	ErrInputValidation                = errors.New("error input validation")
 	ErrUnableToDelete                 = errors.New("unable to delete data")
 	ErrUnableToFetch                  = errors.New("unable to fetch data")
 	ErrIDNotFound                     = errors.New("id not found ")

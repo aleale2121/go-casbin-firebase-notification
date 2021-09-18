@@ -20,6 +20,7 @@ func NewErrorResponse(err error) ErrorModel {
 		ErrorCode:        strconv.Itoa(ErrCodes[err]),
 	}
 }
+// <<<<<<< user-fix
 
 // func NewValidationError(err validator.ValidationErrorsTranslations) ValErrorModel {
 // 	return ValErrorModel{
@@ -31,3 +32,8 @@ func NewErrorResponse(err error) ErrorModel {
 // func (v ValErrorModel) Error() string {
 // 	return "i am an error"
 // }
+// =======
+// func GetStatusCode(err error) int {
+// 	return StatusCodes[err]
+// }
+// >>>>>>> main
