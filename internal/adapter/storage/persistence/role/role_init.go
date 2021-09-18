@@ -2,7 +2,7 @@ package persistence
 
 import (
 	"template/internal/constant/model"
-	"template/internal/adapter/storage"
+	"template/internal/adapter/storage/persistence"
 	"gorm.io/gorm"
 )
 

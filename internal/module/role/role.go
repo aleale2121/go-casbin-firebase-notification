@@ -2,7 +2,7 @@ package role
 
 import (
 	"errors"
-	"template/internal/adapter/storage"
+	"template/internal/adapter/storage/persistence"
 	"template/internal/constant/model"
 )
 
@@ -18,7 +18,7 @@ type service struct {
 	rolePersistence storage.RolePersistence
 }
 
-func Initialize(rolePersistence storage.RolePersistence) UseCase {
+func RoleInitialize(rolePersistence storage.RolePersistence) UseCase {
 	return &service{
 		rolePersistence: rolePersistence,
 	}
