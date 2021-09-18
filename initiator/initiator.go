@@ -4,10 +4,13 @@ import (
 	"log"
 	"os"
 	routing "template/internal/adapter/glue/routing"
+	compHandler "template/internal/adapter/http/rest/server/company"
 	usrHandler "template/internal/adapter/http/rest/server/user"
 	"template/internal/adapter/repository"
+	"template/internal/adapter/storage/persistence/company"
 	"template/internal/adapter/storage/persistence/user"
 	"template/internal/constant/model"
+	compUsecase "template/internal/module/company"
 	usrUsecase "template/internal/module/user"
 
 	"github.com/go-playground/locales/en"
@@ -30,11 +33,6 @@ var (
 
 func Initialize() {
 
-	// en := en.New()
-	// uni = ut.New(en, en)
-	// trans, _ := uni.GetTranslator("en")
-	// validate = validator.New()
-	// en_translations.RegisterDefaultTranslations(validate, trans)
 	if v, ok := binding.Validator.Engine().(*validator.Validate); ok {
 		en := en.New()
 		uni := ut.New(en, en)
@@ -59,16 +57,21 @@ func Initialize() {
 	}
 
 	usrPersistence := user.UserInit(conn)
+	compPersistence := company.CompanyInit(conn)
 
 	usrRepo := repository.UserInit()
 	usrUsecase := usrUsecase.Initialize(usrRepo, usrPersistence)
 	usrHandler := usrHandler.UserInit(usrUsecase, trans)
+
+	compUsecase := compUsecase.Initialize(compPersistence)
+	compHandler := compHandler.CompanyInit(compUsecase, trans)
 
 	router := gin.Default()
 
 	//  group: v1
 	v1 := router.Group("/v1")
 	routing.UserRoutes(v1, usrHandler)
+	routing.CompanyRoutes(v1, compHandler)
 	router.Run()
 	log.Println(usrHandler)
 }
