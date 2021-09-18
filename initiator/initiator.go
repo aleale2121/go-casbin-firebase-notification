@@ -18,6 +18,7 @@ import (
 	"github.com/go-playground/validator/v10"
 
 	"github.com/gin-gonic/gin"
+	"github.com/gin-gonic/gin/binding"
 	en_translations "github.com/go-playground/validator/v10/translations/en"
 	// "github.com/casbin/casbin/v2"
 	// gormadapter "github.com/casbin/gorm-adapter/v3"
@@ -29,15 +30,24 @@ import (
 var (
 	uni      *ut.UniversalTranslator
 	validate *validator.Validate
+	trans    ut.Translator
 )
 
 func Initialize() {
 
-	en := en.New()
-	uni = ut.New(en, en)
-	trans, _ := uni.GetTranslator("en")
-	validate = validator.New()
-	en_translations.RegisterDefaultTranslations(validate, trans)
+	// en := en.New()
+	// uni = ut.New(en, en)
+	// trans, _ := uni.GetTranslator("en")
+	// validate = validator.New()
+	// en_translations.RegisterDefaultTranslations(validate, trans)
+	if v, ok := binding.Validator.Engine().(*validator.Validate); ok {
+		en := en.New()
+		uni := ut.New(en, en)
+		// this is usually know or extracted from http 'Accept-Language' header
+		// also see uni.FindTranslator(...)
+		trans, _ = uni.GetTranslator("en")
+		en_translations.RegisterDefaultTranslations(v, trans)
+	}
 
 	DATABASE_URL := "postgres://postgres:admin@localhost:5432/demo?sslmode=disable"
 
@@ -75,7 +85,7 @@ func Initialize() {
 
 	usrRepo := repository.UserInit()
 	usrUsecase := usrUsecase.Initialize(usrRepo, usrPersistence)
-	usrHandler := usrHandler.UserInit(usrUsecase,trans)
+	usrHandler := usrHandler.UserInit(usrUsecase, trans)
 
 	router := gin.Default()
 

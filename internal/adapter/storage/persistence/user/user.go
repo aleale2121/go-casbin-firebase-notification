@@ -11,3 +11,4 @@ type UserStorage interface {
 	DeleteUser(id uuid.UUID) error
 	GetUsers() ([]model.User, error)
 }
+
