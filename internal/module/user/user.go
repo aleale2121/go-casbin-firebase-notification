@@ -1,9 +1,9 @@
 package user
 
 import (
-	"github.com/aleale2121/go-demo/internal/adapter/storage/persistence/user"
-	"github.com/aleale2121/go-demo/internal/constant/model"
-	"github.com/aleale2121/go-demo/internal/repository"
+	"template/internal/adapter/storage/persistence/user"
+	"template/internal/constant/model"
+	"template/internal/repository"
 	"github.com/gofrs/uuid"
 )
 
@@ -21,8 +21,20 @@ type service struct {
 	usrPersist user.UserStorage
 }
 
+func (s *service) GetUserById(id uuid.UUID) (*model.User, error) {
+	panic("implement me")
+}
+
+func (s *service) DeleteUser(id uuid.UUID) error {
+	panic("implement me")
+}
+
+func (s *service) GetUsers() ([]model.User, error) {
+	panic("implement me")
+}
+
 // creates a new object with UseCase type
-func Initialize(usrRepo repository.UserRepository, usrPersist user.UserStorage) Usecase {
+func Initialize(usrRepo repository.UserRepository, usrPersist user.UserStorage) UseCase {
 	return &service{
 		usrRepo,
 		usrPersist,
@@ -34,11 +46,11 @@ func (s *service) CreateUser(user *model.User) (*model.User, error) {
 	err := s.usrRepo.Encrypt(user)
 
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 
-	usr, err := s.usrPersist.InsertUser(user)
+	usr, err := s.usrPersist.CreateUser(user)
 	if err != nil {
 		return nil, err
 	}

@@ -1,11 +1,11 @@
 package user
 
 import (
-	"log"
-
-	"github.com/aleale2121/go-demo/internal/constant/model"
 	uuid "github.com/satori/go.uuid"
 	"gorm.io/gorm"
+	"log"
+	"template/internal/constant/errors"
+	"template/internal/constant/model"
 )
 
 type userGormRepo struct {
@@ -42,7 +42,7 @@ func (repo userGormRepo) GetUserById(id uuid.UUID) (*model.User, error) {
 	err := repo.conn.First(user, id).Error
 	if err != nil {
 		if err == gorm.ErrRecordNotFound {
-			return nil, errors.IDNotFound
+			return nil, errors.ErrRecordNotFound
 		}
 		return nil, errors.ErrorUnableToFetch
 	}
