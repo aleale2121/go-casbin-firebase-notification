@@ -24,6 +24,11 @@ var (
 	ErrCodeChallengeRquired           = errors.New("invalid_request")
 	ErrUnsupportedCodeChallengeMethod = errors.New("invalid_request")
 	ErrInvalidCodeChallengeLen        = errors.New("invalid_request")
+	ErrRecordNotFound                 = errors.New("record not found")
+	ErrorUnableToFetch                = errors.New("unable to fetch")
+	ErrorUnableToCreate               = errors.New("unable to create")
+	ErrorUnableToConvert               = errors.New("unable to convert")
+	ErrorUnableToBindJsonToStruct     = errors.New("unable to bind json to struct")
 
 	ErrInvalidRedirectURI   = errors.New("invalid redirect uri")
 	ErrInvalidAuthorizeCode = errors.New("invalid authorize code")
@@ -34,6 +39,25 @@ var (
 	ErrMissingCodeVerifier  = errors.New("missing code verifier")
 	ErrMissingCodeChallenge = errors.New("missing code challenge")
 	ErrInvalidCodeChallenge = errors.New("invalid code challenge")
+	ErrDataAlreayExist = errors.New("data should be unique")
+
+	//notification
+	ErrInvalidAPIKey             = errors.New("client API Key is invalid")
+	ErrInvalidMessage            = errors.New("message is invalid")
+	ErrToManyRegIDs              = errors.New("too many registrations ids")
+	ErrInvalidTimeToLive         = errors.New("messages time-to-live is invalid")
+	ErrMissingRegistrationTo     = errors.New("missing registration token")
+	ErrInvalidToken              = errors.New("invalid notification token")
+	ErrNotRegistered             = errors.New("unregistered device")
+	ErrInvalidPackageName        = errors.New("invalid package name")
+	ErrMismatchSenderID          = errors.New("mismatched sender id")
+	ErrMessageTooBig             = errors.New("message is too big")
+	ErrInvalidDataKey            = errors.New("invalid data key")
+	ErrInvalidTTL                = errors.New("invalid time to live")
+	ErrDeviceMessageRateExceeded = errors.New("device message rate exceeded")
+	ErrTopicsMessageRateExceeded = errors.New("topics message rate exceeded")
+	ErrDataIsEmpty               = errors.New("data and notification are empty")
+	ErrInvalidVariable           = errors.New("invalid variable")
 )
 
 // Descriptions error description
@@ -58,6 +82,15 @@ var Descriptions = map[error]string{
 	ErrCodeChallengeRquired:           "PKCE is required. code_challenge is missing",
 	ErrUnsupportedCodeChallengeMethod: "Selected code_challenge_method not supported",
 	ErrInvalidCodeChallengeLen:        "Code challenge length must be between 43 and 128 charachters long",
+	ErrInvalidAPIKey:                  "provided api key is not valid",
+	ErrInvalidMessage:                 "provided message is Invalid",
+	ErrToManyRegIDs:                   "too many registration id exist",
+	ErrorUnableToCreate:               "unable to create",
+	ErrInvalidToken:                    "Invalid notification token was provided",
+	ErrDataAlreayExist:                 "provided data is already exist",
+	ErrorUnableToBindJsonToStruct:       "unable to parse json to struct",
+	ErrorUnableToConvert:                 "unable to convert type conversion",
+	ErrInvalidVariable:                   "unable to process the provided variable",
 }
 
 // StatusCodes response error HTTP status code
@@ -80,6 +113,15 @@ var StatusCodes = map[error]int{
 	ErrUnableToSave:                   422,
 	ErrUnableToDelete:                 422,
 	ErrUnableToFetch:                  422,
+	ErrInvalidAPIKey:                  400,
+	ErrInvalidMessage:                 400,
+	ErrToManyRegIDs:                   406,
+	ErrorUnableToCreate:               422,
+	ErrInvalidToken:                   400,
+	ErrDataAlreayExist:                406,
+	ErrorUnableToBindJsonToStruct:     400,
+	ErrorUnableToConvert:              403,
+	ErrInvalidVariable:                406,
 }
 
 // StatusCodes response error HTTP status code
@@ -105,4 +147,13 @@ var ErrCodes = map[error]int{
 	ErrUnableToSave:                   4014,
 	ErrUnableToDelete:                 4015,
 	ErrUnableToFetch:                  4016,
+	ErrInvalidAPIKey:                  4017,
+	ErrInvalidMessage:                 4018,
+	ErrToManyRegIDs:                   4019,
+	ErrorUnableToCreate:               4020,
+	ErrInvalidToken:                   4021,
+	ErrDataAlreayExist:                4022,
+	ErrorUnableToBindJsonToStruct:     4023,
+	ErrorUnableToConvert:               4024,
+	ErrInvalidVariable:                 4025,
 }

@@ -1,7 +1,7 @@
 package user
 
-import (
-	"template/internal/adapter/repository"
+import (	
+  "template/internal/adapter/repository"
 	"template/internal/adapter/storage/persistence/user"
 
 	appErr "template/internal/constant/errors"
@@ -27,6 +27,7 @@ type service struct {
 	validate   *validator.Validate
 	trans      ut.Translator
 }
+
 
 // creates a new object with UseCase type
 func Initialize(usrRepo repository.UserRepository, usrPersist user.UserStorage, validate *validator.Validate, trans ut.Translator) Usecase {
@@ -70,9 +71,11 @@ func (s *service) GetUserById(id uuid.UUID) (*model.User, error) {
 
 	return usr, nil
 }
+
 func (s *service) DeleteUser(id uuid.UUID) error {
 	return s.usrPersist.DeleteUser(id)
 }
+
 func (s *service) GetUsers() ([]model.User, error) {
 	return s.usrPersist.GetUsers()
 }
