@@ -1,6 +1,8 @@
 package company
 
 import (
+	"log"
+	"template/internal/constant/errors"
 	"template/internal/constant/model"
 
 	uuid "github.com/satori/go.uuid"
@@ -16,7 +18,14 @@ func CompanyInit(db *gorm.DB) CompanyStorage {
 }
 
 func (repo companyGormRepo) CreateCompany(company *model.Company) (*model.Company, error) {
-	return nil, nil
+
+	err := repo.conn.Create(company).Error
+
+	if err != nil {
+		log.Printf("Errror when saving  company to db %v", err)
+		return nil, errors.ErrUnknown
+	}
+	return company, nil
 }
 
 func (repo companyGormRepo) GetCompanyById(id uuid.UUID) (*model.Company, error) {
