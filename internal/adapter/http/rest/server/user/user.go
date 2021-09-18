@@ -8,13 +8,14 @@ import (
 	"template/internal/module/user"
 
 	"github.com/gin-gonic/gin"
-	ut "github.com/go-playground/universal-translator"
 	"github.com/go-playground/validator/v10"
 	uuid "github.com/satori/go.uuid"
+
+	ut "github.com/go-playground/universal-translator"
 )
 
 // UserHandler contans a function of handlers for the domian file
-type UsersHandler interface {
+type UserHandler interface {
 	CreateUser(c *gin.Context)
 	GetUserById(c *gin.Context)
 	DeleteUser(c *gin.Context)
@@ -27,8 +28,8 @@ type userHandler struct {
 	trans       ut.Translator
 }
 
-//UserInit initializes a user handler for the domin file
-func UserInit(userUsecase user.Usecase, trans ut.Translator) UsersHandler {
+//UserInit initializes a user handler for the domin user
+func UserInit(userUsecase user.Usecase, trans ut.Translator) UserHandler {
 	return &userHandler{
 		userUsecase,
 		trans,
@@ -36,8 +37,16 @@ func UserInit(userUsecase user.Usecase, trans ut.Translator) UsersHandler {
 }
 
 // CreateUser creates a new user
-// POST /v1/users
+// POST /v1/:com-id/users
 func (uh userHandler) CreateUser(c *gin.Context) {
+	ID := c.Param("comp-id")
+
+	compID, err := uuid.FromString(ID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"errors": errModel.NewErrorResponse(err)})
+		return
+	}
+
 	var insertUser model.User
 
 	if err := c.ShouldBind(&insertUser); err != nil {
@@ -52,7 +61,7 @@ func (uh userHandler) CreateUser(c *gin.Context) {
 		return
 
 	}
-	user, err := uh.userUsecase.CreateUser(&insertUser)
+	user, err := uh.userUsecase.CreateUser(compID, &insertUser)
 
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"errors": errModel.NewErrorResponse(err)})

@@ -4,12 +4,15 @@ import (
 	"log"
 	"os"
 	routing "template/internal/adapter/glue/routing"
+	compHandler "template/internal/adapter/http/rest/server/company"
 	usrHandler "template/internal/adapter/http/rest/server/user"
 	rlHandler "template/internal/adapter/http/rest/server/role"
 	"template/internal/adapter/repository"
+	"template/internal/adapter/storage/persistence/company"
 	"template/internal/adapter/storage/persistence/user"
 	"template/internal/adapter/storage/persistence/role"
 	"template/internal/constant/model"
+	compUsecase "template/internal/module/company"
 	usrUsecase "template/internal/module/user"
 	roleUsecase "template/internal/module/role"
 
@@ -35,11 +38,6 @@ var (
 
 func Initialize() {
 
-	// en := en.New()
-	// uni = ut.New(en, en)
-	// trans, _ := uni.GetTranslator("en")
-	// validate = validator.New()
-	// en_translations.RegisterDefaultTranslations(validate, trans)
 	if v, ok := binding.Validator.Engine().(*validator.Validate); ok {
 		en := en.New()
 		uni := ut.New(en, en)
@@ -79,23 +77,34 @@ func Initialize() {
 	// Save the policy back to DB.
 	// e.SavePolicy()
 	usrPersistence := user.UserInit(conn)
-	rolePersistent:=persistence.RoleInit(conn)
-    roleUsecase:=roleUsecase.RoleInitialize(rolePersistent)
-    roleHandler:=rlHandler.NewRoleHandler(roleUsecase,trans)
+// <<<<<<< user-fix
+// 	compPersistence := company.CompanyInit(conn)
+// =======
+// 	rolePersistent:=persistence.RoleInit(conn)
+//     roleUsecase:=roleUsecase.RoleInitialize(rolePersistent)
+//     roleHandler:=rlHandler.NewRoleHandler(roleUsecase,trans)
+// >>>>>>> main
 
 	usrRepo := repository.UserInit()
 	usrUsecase := usrUsecase.Initialize(usrRepo, usrPersistence)
 	usrHandler := usrHandler.UserInit(usrUsecase, trans)
+
+	compUsecase := compUsecase.Initialize(compPersistence)
+	compHandler := compHandler.CompanyInit(compUsecase, trans)
 
 	router := gin.Default()
 
 	//  group: v1
 	v1 := router.Group("/v1")
 	routing.UserRoutes(v1, usrHandler)
+// <<<<<<< user-fix
+// 	routing.CompanyRoutes(v1, compHandler)
+=======
 
-	roleGroup:=v1.Group("/roles")
-	routing.RoleRoutes(roleGroup,roleHandler)
+// 	roleGroup:=v1.Group("/roles")
+// 	routing.RoleRoutes(roleGroup,roleHandler)
 
+// >>>>>>> main
 	router.Run()
-	log.Println(usrHandler)
+// 	log.Println(usrHandler)
 }

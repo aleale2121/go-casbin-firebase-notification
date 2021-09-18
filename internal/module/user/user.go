@@ -10,7 +10,7 @@ import (
 
 // Usecase interface contains function of business logic for domian USer
 type Usecase interface {
-	CreateUser(user *model.User) (*model.User, error)
+	CreateUser(companyID uuid.UUID, user *model.User) (*model.User, error)
 	GetUserById(id uuid.UUID) (*model.User, error)
 	DeleteUser(id uuid.UUID) error
 	GetUsers() ([]model.User, error)
@@ -30,7 +30,7 @@ func Initialize(usrRepo repository.UserRepository, usrPersist user.UserStorage) 
 	}
 }
 
-func (s *service) CreateUser(user *model.User) (*model.User, error) {
+func (s *service) CreateUser(companyID uuid.UUID, user *model.User) (*model.User, error) {
 
 	err := s.usrRepo.Encrypt(user)
 
@@ -38,7 +38,7 @@ func (s *service) CreateUser(user *model.User) (*model.User, error) {
 		return nil, err
 	}
 
-	usr, err := s.usrPersist.CreateUser(user)
+	usr, err := s.usrPersist.CreateUser(companyID, user)
 	if err != nil {
 		return nil, err
 	}
