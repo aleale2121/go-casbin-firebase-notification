@@ -13,6 +13,7 @@ import (
 
 // Usecase interface contains function of business logic for domian Company
 type Usecase interface {
+	Companies() ([]model.Company, error)
 	CreateCompany(company *model.Company) (*model.Company, error)
 	GetCompanyById(id uuid.UUID) (*model.Company, error)
 	DeleteUser(id uuid.UUID) error
@@ -32,6 +33,14 @@ func Initialize(companyPersist company.CompanyStorage, validate *validator.Valid
 		validate,
 		trans,
 	}
+}
+func (s *service)Companies() ([]model.Company, error){
+
+	companies, err := s.companyPersist.Companies()
+	if err != nil {
+		return nil,err
+	}
+	return companies, nil
 }
 
 func (s *service) CreateCompany(comp *model.Company) (*model.Company, error) {

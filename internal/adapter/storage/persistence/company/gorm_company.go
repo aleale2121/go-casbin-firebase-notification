@@ -38,6 +38,18 @@ func (repo companyGormRepo) GetCompanyById(id uuid.UUID) (*model.Company, error)
 	return company, nil
 
 }
+func (repo companyGormRepo) Companies() ([]model.Company, error) {
+	conn := repo.conn
+
+	companies := []model.Company{}
+
+	err := conn.Model(&model.Company{}).Find(&companies).Error
+	if err != nil {
+		return nil, err
+	}
+	return companies, nil
+
+}
 func (repo companyGormRepo) DeleteUser(id uuid.UUID) error {
 	return nil
 }

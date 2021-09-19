@@ -1,4 +1,4 @@
-package persistence
+package role;
 
 import (
 	"template/internal/constant/model"

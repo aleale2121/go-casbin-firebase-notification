@@ -10,5 +10,6 @@ import (
 func CompanyRoutes(grp *gin.RouterGroup, compHandler company.CompanyHandler) {
 	grp.POST("/companies", compHandler.CreateCompany)
 	grp.GET("/companies/:id", compHandler.GetCompanyById)
+	grp.GET("/companies", compHandler.Companies)
 	grp.DELETE("/companies/:id", compHandler.DeleteCompany)
 }

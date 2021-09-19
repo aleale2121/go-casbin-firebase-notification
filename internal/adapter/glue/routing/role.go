@@ -8,8 +8,9 @@ import (
 
 // UserRoutes registers users routes
 func RoleRoutes(grp *gin.RouterGroup, roleHandler role.RolesHandler) {
-	grp.POST("",roleHandler.MiddleWareValidateRole, roleHandler.AddRole)
-	grp.GET("/:name", roleHandler.GetRoleByName)
-	grp.DELETE("/:name", roleHandler.DeleteRole)
-	grp.GET("", roleHandler.GetRoles)
+	roleGrp:=grp.Group("/roles")
+	roleGrp.POST("",roleHandler.MiddleWareValidateRole, roleHandler.AddRole)
+	roleGrp.GET("/:name", roleHandler.GetRoleByName)
+	roleGrp.DELETE("/:name", roleHandler.DeleteRole)
+	roleGrp.GET("", roleHandler.GetRoles)
 }

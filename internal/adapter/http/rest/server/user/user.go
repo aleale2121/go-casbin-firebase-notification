@@ -16,6 +16,7 @@ import (
 // UserHandler contans a function of handlers for the domian file
 type UserHandler interface {
 	CreateUser(c *gin.Context)
+	CreateSystemUser(c *gin.Context)
 	GetUserById(c *gin.Context)
 	DeleteUser(c *gin.Context)
 	GetUsers(c *gin.Context)
@@ -72,9 +73,38 @@ func (uh userHandler) CreateUser(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusCreated, gin.H{"user": user})
-	return
 }
 
+func (uh userHandler) CreateSystemUser(c *gin.Context) {
+
+	var insertUser model.User
+
+	if err := c.ShouldBind(&insertUser); err != nil {
+
+		// var verr validator.ValidationErrors
+
+		// if errors.As(err, &verr) {
+		// 	c.JSON(http.StatusBadRequest, gin.H{"errors": verr.Translate(uh.trans)})
+		// 	return
+		// }
+		c.JSON(http.StatusBadRequest, gin.H{"errors": errModel.NewErrorResponse(errModel.ErrUnknown)})
+		return
+
+	}
+	user, err := uh.userUsecase.CreateSystemUser( &insertUser)
+
+	if err != nil {
+		if errors.As(err, &errModel.ValErr{}) {
+			c.JSON(http.StatusBadRequest, gin.H{"errors": err})
+			return
+		}
+		c.JSON(http.StatusBadRequest, gin.H{"errors": errModel.NewErrorResponse(err)})
+		return
+	}
+
+	c.JSON(http.StatusCreated, gin.H{"user": user})
+
+}
 // GetUserById gets a user by id
 func (uh userHandler) GetUserById(c *gin.Context) {
 
@@ -93,7 +123,7 @@ func (uh userHandler) GetUserById(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{"user": user})
-	return
+
 }
 
 // DeleteUser deletes user by id
@@ -113,7 +143,7 @@ func (uh userHandler) DeleteUser(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusNoContent, gin.H{})
-	return
+
 }
 
 // GetUsers gets a list of users
@@ -126,5 +156,5 @@ func (uh userHandler) GetUsers(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{"users": users})
-	return
+
 }

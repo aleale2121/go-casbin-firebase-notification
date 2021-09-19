@@ -1,4 +1,4 @@
-package role
+package permission;
 
 import (
 	"template/internal/adapter/storage/persistence"

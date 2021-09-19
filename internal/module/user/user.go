@@ -1,6 +1,6 @@
 package user
 
-import (	
+import (
   "template/internal/adapter/repository"
 	"template/internal/adapter/storage/persistence/user"
 
@@ -15,6 +15,7 @@ import (
 // Usecase interface contains function of business logic for domian USer
 type Usecase interface {
 	CreateUser(companyID uuid.UUID, user *model.User) (*model.User, error)
+	CreateSystemUser(user *model.User) (*model.User, error)
 	GetUserById(id uuid.UUID) (*model.User, error)
 	DeleteUser(id uuid.UUID) error
 	GetUsers() ([]model.User, error)
@@ -63,6 +64,29 @@ func (s *service) CreateUser(companyID uuid.UUID, user *model.User) (*model.User
 	return usr, nil
 }
 
+func (s *service) CreateSystemUser(user *model.User) (*model.User, error) {
+
+	valErr := s.validate.Struct(user)
+
+	if valErr != nil {
+		errs := valErr.(validator.ValidationErrors)
+		valErr := errs.Translate(s.trans)
+		return nil, appErr.NewValErrResponse(valErr)
+	}
+
+	err := s.usrRepo.Encrypt(user)
+
+	if err != nil {
+		return nil, err
+	}
+
+	usr, err := s.usrPersist.CreateSystemUser( user)
+	if err != nil {
+		return nil, err
+	}
+
+	return usr, nil
+}
 func (s *service) GetUserById(id uuid.UUID) (*model.User, error) {
 	usr, err := s.usrPersist.GetUserById(id)
 	if err != nil {

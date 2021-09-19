@@ -1,18 +1,12 @@
 package user
 
 import (
-<<<<<<< HEAD
-=======
 	"log"
 
 	"template/internal/constant/errors"
-	"template/internal/constant/model"
 
->>>>>>> d5fccbad224c56d682175266c514fe281f238026
 	uuid "github.com/satori/go.uuid"
 	"gorm.io/gorm"
-	"log"
-	"template/internal/constant/errors"
 	"template/internal/constant/model"
 )
 
@@ -24,6 +18,35 @@ func UserInit(db *gorm.DB) UserStorage {
 	return &userGormRepo{conn: db}
 }
 
+func (repo userGormRepo) User(param model.User) (*model.User, error) {
+	conn := repo.conn
+	user := &model.User{}
+
+	err := conn.Model(&model.User{}).Where(&param).First(user).Error
+	if err != nil {
+		return nil, err
+	}
+	return user, nil
+}
+func (repo userGormRepo) CreateSystemUser(user *model.User) (*model.User, error) {
+	conn := repo.conn
+
+	err := conn.Model(&model.User{}).Create(&user).Error
+	if err != nil {
+		return nil, err
+	}
+	return user, nil
+}
+func (repo userGormRepo) UserCompanyRole(param model.UserCompanyRole) (*model.UserCompanyRole, error) {
+	conn := repo.conn
+	userRole:= &model.UserCompanyRole{}
+
+	err := conn.Model(&model.UserCompanyRole{}).Where(&param).First(userRole).Error
+	if err != nil {
+		return nil, err
+	}
+	return userRole, nil
+}
 func (repo userGormRepo) CreateUser(companyID uuid.UUID, usr *model.User) (*model.User, error) {
 	tx := repo.conn.Begin()
 
@@ -56,7 +79,13 @@ func (repo userGormRepo) CreateUser(companyID uuid.UUID, usr *model.User) (*mode
 		log.Printf("This is the error returned %v", err)
 		return nil, errors.ErrUnknown
 	}
-
+    parentRole:=""
+	childRole:=""
+	if usr.RoleName=="COMPANY-ADMIN" || usr.RoleName=="COMPANY-CLERK"{
+		parentRole="COMPANY-USER"
+		childRole=usr.RoleName
+	}
+	usr.RoleName=parentRole;
 	err = tx.Create(&usr).Error
 	if err != nil {
 		tx.Rollback()
@@ -67,7 +96,7 @@ func (repo userGormRepo) CreateUser(companyID uuid.UUID, usr *model.User) (*mode
 	ucr := model.UserCompanyRole{
 		UserID:    usr.ID,
 		CompanyID: companyID,
-		RoleName:  usr.RoleName,
+		RoleName:  childRole,
 	}
 
 	err = tx.Create(ucr).Error
@@ -100,15 +129,8 @@ func (repo userGormRepo) GetUserById(id uuid.UUID) (*model.User, error) {
 	user := &model.User{}
 	err := repo.conn.First(user, id).Error
 	if err != nil {
-<<<<<<< HEAD
-		if err == gorm.ErrRecordNotFound {
-			return nil, errors.ErrRecordNotFound
-		}
-		return nil, errors.ErrorUnableToFetch
-=======
 		log.Println(err)
 		return nil, errors.ErrUnknown
->>>>>>> d5fccbad224c56d682175266c514fe281f238026
 	}
 	return user, nil
 }

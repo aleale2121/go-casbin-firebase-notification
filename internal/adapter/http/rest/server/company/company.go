@@ -13,6 +13,7 @@ import (
 )
 
 type CompanyHandler interface {
+	Companies(c *gin.Context)
 	CreateCompany(c *gin.Context)
 	GetCompanyById(c *gin.Context)
 	DeleteCompany(c *gin.Context)
@@ -30,6 +31,15 @@ func CompanyInit(compUsecase company.Usecase, trans ut.Translator) CompanyHandle
 	}
 }
 
+func (ch companyHandler) Companies(c *gin.Context) {
+  companies, err := ch.compUsecase.Companies()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"errors": appErr.NewErrorResponse(err)})
+		return
+	}
+
+	c.JSON(http.StatusOK,  companies)
+}
 func (ch companyHandler) CreateCompany(c *gin.Context) {
 	var insertCompany model.Company
 	if err := c.ShouldBind(&insertCompany); err != nil {
@@ -53,7 +63,7 @@ func (ch companyHandler) CreateCompany(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusCreated, gin.H{"company": company})
-	return
+
 }
 
 func (ch companyHandler) GetCompanyById(c *gin.Context) {
@@ -73,7 +83,7 @@ func (ch companyHandler) GetCompanyById(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{"company": company})
-	return
+
 }
 
 func (ch companyHandler) DeleteCompany(c *gin.Context) {}
