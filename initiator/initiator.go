@@ -6,7 +6,7 @@ import (
 	routing "template/internal/adapter/glue/routing"
 	compHandler "template/internal/adapter/http/rest/server/company"
 	usrHandler "template/internal/adapter/http/rest/server/user"
-	rlHandler "template/internal/adapter/http/rest/server/role"
+	_ "template/internal/adapter/http/rest/server/role"
 	"template/internal/adapter/repository"
 	"template/internal/adapter/storage/persistence/company"
 	"template/internal/adapter/storage/persistence/user"
@@ -59,7 +59,7 @@ func Initialize() {
 	}
 
 	// conn.AutoMigrate migrates gorm models
-	conn.AutoMigrate(&model.Role{},&model.User{}, &model.UserCompanyRole{}, &model.PushedNotification{}, &model.Notification{}, &model.Company{})
+	conn.AutoMigrate(&model.Role{},&model.User{}, &model.UserCompanyRole{}, &model.PushedNotification{}, &model.PushedNotification{}, &model.Company{})
 
 	// a, _ := gormadapter.NewAdapterByDBWithCustomTable(conn, &model.CasbinRule{})
 	// e, _ := casbin.NewEnforcer("../rbac_model.conf", a)

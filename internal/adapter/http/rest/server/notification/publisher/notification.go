@@ -1,4 +1,4 @@
-package notification
+package publisher
 
 import (
 	"github.com/appleboy/go-fcm"
@@ -9,28 +9,30 @@ import (
 	"template/internal/constant"
 	"template/internal/constant/errors"
 	"template/internal/constant/model"
-	"template/internal/module/notification"
+	"template/internal/module/notification/publisher"
 )
-
+//NotificationHandler contains all handler interfaces
 type NotificationHandler interface {
 	MiddleWareValidateNotification(c *gin.Context)
 	GetNotifications(c *gin.Context)
-	CreateNotification(c *gin.Context)
+	PushNotification(c *gin.Context)
 	DeleteNotification(c *gin.Context)
 }
+//notificationHandler implements notification servicea and goalang validator object
 type notificationHandler struct {
 	notificationUseCase notification.Usecase
 	validate            *validator.Validate
 }
-
-func NewRoleHandler(notfCase notification.Usecase, valid *validator.Validate) NotificationHandler {
+//NewNotificationHandler  initializes notification services and golang validator
+func NewNotificationHandler(notfCase notification.Usecase, valid *validator.Validate) NotificationHandler {
 	return &notificationHandler{
 		notificationUseCase: notfCase,
 		validate:            valid,
 	}
 }
+//MiddleWareValidateNotification binds pushed notification data as json
 func (n notificationHandler) MiddleWareValidateNotification(c *gin.Context) {
-	notification := model.Notification{}
+	notification := model.PushedNotification{}
 	err := c.Bind(&notification)
 	if err != nil {
 		errValue := errors.ErrorModel{
@@ -47,7 +49,7 @@ func (n notificationHandler) MiddleWareValidateNotification(c *gin.Context) {
 	c.Set("x-notification", notification)
 	c.Next()
 }
-
+//GetNotifications return all notification
 func (n notificationHandler) GetNotifications(c *gin.Context) {
 	successData, errData := n.notificationUseCase.Notifications()
 	if errData != nil {
@@ -65,9 +67,10 @@ func (n notificationHandler) GetNotifications(c *gin.Context) {
 	constant.ResponseJson(c, *successData, successData.Code)
 
 }
-func (n notificationHandler) CreateNotification(c *gin.Context) {
-	notification := c.MustGet("x-notification").(model.Notification)
-	successData, errData := n.notificationUseCase.CreateNotification(notification)
+//PushNotification pushes message via valid device token
+func (n notificationHandler) PushNotification(c *gin.Context) {
+	notification := c.MustGet("x-notification").(model.PushedNotification)
+	successData, errData := n.notificationUseCase.PushSingleNotification(notification)
 	if errData != nil {
 		code, err := strconv.Atoi(errData.ErrorCode)
 		if err != nil {
@@ -81,7 +84,7 @@ func (n notificationHandler) CreateNotification(c *gin.Context) {
 		constant.ResponseJson(c, *errData, code)
 	}
 	// TODO:01 push notification code put here
-	data:=successData.Data.(model.Notification)
+	data:=successData.Data.(model.PushedNotification)
 	msg := &fcm.Message{
 		To: data.Data,
 		Data: map[string]interface{}{"greet":data.Data,"api_key":data.ApiKey},
@@ -103,12 +106,15 @@ func (n notificationHandler) CreateNotification(c *gin.Context) {
 	}
 	constant.ResponseJson(c, *client, client.Success)
 	// TODO:02 store push notification here
-	constant.ResponseJson(c, *successData, successData.Code)
-
+	Data,err :=n.notificationUseCase.PushSingleNotification(notification)
+	if err != nil {
+		code, _ :=strconv.Atoi(err.ErrorCode)
+		constant.ResponseJson(c, *err, code)
+	}
+	constant.ResponseJson(c, *Data, Data.Code)
 }
-
+//DeleteNotification removes  specific notification message identified by id notification
 func (n notificationHandler) DeleteNotification(c *gin.Context) {
-
 	id := c.Param("id")
 	u_id, err := uuid.FromString(id)
 	if err != nil {
@@ -130,7 +136,7 @@ func (n notificationHandler) DeleteNotification(c *gin.Context) {
 		constant.ResponseJson(c, errValue, errors.StatusCodes[errors.ErrInvalidVariable])
 	}
 
-	successData, errData := n.notificationUseCase.DeleteNotification(model.Notification{ID: u_id})
+	successData, errData := n.notificationUseCase.DeleteNotification(model.PushedNotification{ID: u_id})
 	if errData != nil {
 		code, err := strconv.Atoi(errData.ErrorCode)
 		if err != nil {
@@ -144,6 +150,7 @@ func (n notificationHandler) DeleteNotification(c *gin.Context) {
 	}
 	constant.ResponseJson(c, *successData, successData.Code)
 }
+//NewClientNotification send push notification using firebase cloudy message apikey and  device  valid token
 func NewClientNotification(msg *fcm.Message)(*fcm.Response,*errors.ErrorModel)  {
 	// Create a FCM client to send the message.
 	client, err := fcm.NewClient(msg.Data["api_key"].(string))
