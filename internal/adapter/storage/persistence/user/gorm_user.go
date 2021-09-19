@@ -49,7 +49,7 @@ func (repo userGormRepo) CreateUser(companyID uuid.UUID, usr *model.User) (*mode
 	}
 
 	role := &model.Role{}
-	err = tx.Where("name = ?", usr.RoleName).First(role).Error
+	err = tx.Where("name = ?",usr.RoleName).First(role).Error
 
 	if err != nil {
 		tx.Rollback()
