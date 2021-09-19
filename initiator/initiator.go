@@ -26,6 +26,7 @@ import (
 	persistence "template/internal/adapter/storage/persistence/role"
 	"template/internal/adapter/storage/persistence/user"
 	"template/internal/constant"
+	"template/internal/constant/errors"
 	compUsecase "template/internal/module/company"
 	email2 "template/internal/module/notification/email"
 	publisher2 "template/internal/module/notification/publisher"
@@ -59,7 +60,7 @@ func Initialize() {
 	connStr, _ := constant.DbConnectionString()
 	dbConn, err := gorm.Open(postgres.Open(connStr), &gorm.Config{})
 	if err != nil {
-
+         log.Fatal("error ",errors.ErrDatabaseConnection)
 	}
 	x, _ := dbConn.DB()
 	defer x.Close()
