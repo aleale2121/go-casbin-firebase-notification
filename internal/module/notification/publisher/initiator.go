@@ -1,4 +1,4 @@
-package notification
+package publisher
 
 import (
 	"template/internal/adapter/storage/persistence/notification/publisher"

@@ -1,4 +1,4 @@
-package notification
+package publisher
 
 import (
 	"net/http"

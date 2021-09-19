@@ -64,6 +64,7 @@ var (
 	ErrorInvalidCallBackUrl      = errors.New("invalid call back url")
 	ErrUnableToSendEmailMessage  = errors.New("unable to send email message")
 	ErrUnableToSendSmsMessage    = errors.New("unable to send sms message")
+	ErrDatabaseConnection         =errors.New("database connection failed")
 )
 
 // Descriptions error description
@@ -103,6 +104,7 @@ var Descriptions = map[error]string{
 	ErrorInvalidCallBackUrl:           "sms not sent due to invalid call back url is provided ",
 	ErrUnableToSendEmailMessage:       "unable to send email message please try again",
 	ErrUnableToSendSmsMessage:         "unable to send sms message please try again",
+	ErrDatabaseConnection:              "error occurred while establishing a database connection",
 }
 
 // StatusCodes response error HTTP status code
@@ -140,6 +142,7 @@ var StatusCodes = map[error]int{
 	ErrorInvalidCallBackUrl:           400,
 	ErrUnableToSendEmailMessage:       400,
 	ErrUnableToSendSmsMessage:         400,
+	ErrDatabaseConnection:             500,
 }
 
 // StatusCodes response error HTTP status code
@@ -180,4 +183,5 @@ var ErrCodes = map[error]int{
 	ErrorInvalidCallBackUrl:           4029,
 	ErrUnableToSendEmailMessage:       4030,
 	ErrUnableToSendSmsMessage:         4031,
+	ErrDatabaseConnection:             4032,
 }
