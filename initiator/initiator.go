@@ -1,22 +1,34 @@
 package initiator
 
 import (
+	"fmt"
+	"github.com/joho/godotenv"
+	gomail "gopkg.in/mail.v2"
 	"log"
 	"net/http"
 	"os"
 	routing "template/internal/adapter/glue/routing"
 	authHandler "template/internal/adapter/http/rest/server/auth"
-	compHandler "template/internal/adapter/http/rest/server/company"
 	permHandler "template/internal/adapter/http/rest/server/permission"
+	compHandler "template/internal/adapter/http/rest/server/company"
+	email3 "template/internal/adapter/http/rest/server/notification/email"
+	publisher3 "template/internal/adapter/http/rest/server/notification/publisher"
+	sms3 "template/internal/adapter/http/rest/server/notification/sms"
 	rlHandler "template/internal/adapter/http/rest/server/role"
 	usrHandler "template/internal/adapter/http/rest/server/user"
 	"template/internal/adapter/repository"
 	"template/internal/adapter/storage/persistence/company"
 	"template/internal/adapter/storage/persistence/role"
-	"template/internal/adapter/storage/persistence/user"
 	"template/internal/constant/model"
 	authUsecase "template/internal/module/auth"
+	"template/internal/adapter/storage/persistence/notification/email"
+	"template/internal/adapter/storage/persistence/notification/publisher"
+	"template/internal/adapter/storage/persistence/notification/sms"
+	"template/internal/adapter/storage/persistence/user"
 	compUsecase "template/internal/module/company"
+	email2 "template/internal/module/notification/email"
+	publisher2 "template/internal/module/notification/publisher"
+	sms2 "template/internal/module/notification/sms"
 	roleUsecase "template/internal/module/role"
 	usrUsecase "template/internal/module/user"
     casAuth "template/platform/casbin"
@@ -36,7 +48,7 @@ import (
 	"gorm.io/gorm"
 )
 
-// global validator instance
+//global validator instance
 var (
 	// uni      *ut.UniversalTranslator
 	validate *validator.Validate
@@ -44,27 +56,28 @@ var (
 )
 
 func Initialize() {
+	//loading environmental variables
+	err := godotenv.Load("../.env")
+	fmt.Println("env err ", err ,os.Getenv("DB_PASS"))
+	if err != nil {
 
-	// if v, ok := binding.Validator.Engine().(*validator.Validate); ok {
+		log.Fatalf("Error loading .env file")
+	}
 	en := en.New()
 	uni := ut.New(en, en)
 	trans, _ = uni.GetTranslator("en")
 	validate = validator.New()
 	en_translations.RegisterDefaultTranslations(validate, trans)
-	// }
 
 	DATABASE_URL := "postgres://postgres:admin@localhost:5432/demo?sslmode=disable"
-
 	conn, err := gorm.Open(postgres.Open(DATABASE_URL), &gorm.Config{
 		SkipDefaultTransaction: true,
 	})
-
 	if err != nil {
 		log.Printf("Error when Opening database connection: %v", err)
 		os.Exit(1)
 	}
 
-	// conn.AutoMigrate migrates gorm models
 
 	conn.AutoMigrate(&model.Role{}, &model.User{}, &model.UserCompanyRole{},  &model.Company{})
 
@@ -77,6 +90,29 @@ func Initialize() {
 	usrPersistence := user.UserInit(conn)
 	compPersistence := company.CompanyInit(conn)
 	rolePersistent := role.RoleInit(conn)
+
+
+	//notification persistence
+	emailPersistent := email.EmailInit(conn)
+	smsPersistent := sms.SmsInit(conn)
+	publisherPersistent := publisher.NotificationInit(conn)
+	err = emailPersistent.MigrateEmail()
+    if err != nil {
+		panic(err)
+	}
+
+	//notification services
+	emailUsecase := email2.InitializeEmail(emailPersistent)
+	smsUsecase := sms2.InitializeSms(smsPersistent)
+	publisherUsecase := publisher2.InitializePublisher(publisherPersistent)
+
+	//notification handlers
+	m := gomail.NewMessage()
+	v := validator.New()
+	emailHandler :=email3.NewEmailHandler(emailUsecase,v,m)
+	smsHandler :=sms3.NewSmsHandler(smsUsecase,v)
+	publisherHandler :=publisher3.NewNotificationHandler(publisherUsecase,v)
+
 
 	roleUsecase := roleUsecase.RoleInitialize(rolePersistent)
 	roleHandler := rlHandler.NewRoleHandler(roleUsecase, trans)
@@ -106,6 +142,11 @@ func Initialize() {
 	routing.RoleRoutes(v1, roleHandler)
 	routing.PermissionRoutes(v1, permHandler)
 	routing.AuthRoutes(v1, authHandlers)
+		//notification
+	routing.EmailRoutes(v1, emailHandler)
+	routing.SmsRoutes(v1, smsHandler)
+	routing.PublisherRoutes(v1, publisherHandler)
+	router.Run()
 
 	logrus.WithFields(logrus.Fields{
 		"host": "127.0.0.1",
@@ -127,4 +168,5 @@ func corsMW() gin.HandlerFunc {
 
 		c.Next()
 	}
+
 }

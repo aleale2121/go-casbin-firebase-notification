@@ -27,7 +27,7 @@ var (
 	ErrRecordNotFound                 = errors.New("record not found")
 	ErrorUnableToFetch                = errors.New("unable to fetch")
 	ErrorUnableToCreate               = errors.New("unable to create")
-	ErrorUnableToConvert               = errors.New("unable to convert")
+	ErrorUnableToConvert              = errors.New("unable to convert")
 	ErrorUnableToBindJsonToStruct     = errors.New("unable to bind json to struct")
 
 	ErrInvalidRedirectURI   = errors.New("invalid redirect uri")
@@ -39,7 +39,7 @@ var (
 	ErrMissingCodeVerifier  = errors.New("missing code verifier")
 	ErrMissingCodeChallenge = errors.New("missing code challenge")
 	ErrInvalidCodeChallenge = errors.New("invalid code challenge")
-	ErrDataAlreayExist = errors.New("data should be unique")
+	ErrDataAlreayExist      = errors.New("data should be unique")
 
 	//notification
 	ErrInvalidAPIKey             = errors.New("client API Key is invalid")
@@ -58,6 +58,13 @@ var (
 	ErrTopicsMessageRateExceeded = errors.New("topics message rate exceeded")
 	ErrDataIsEmpty               = errors.New("data and notification are empty")
 	ErrInvalidVariable           = errors.New("invalid variable")
+	ErrorInvalidRecieverAddress  = errors.New("invalid receiver address")
+	ErrorInvalidBody             = errors.New("invalid body provided")
+	ErrorInvalidSenderAddress    = errors.New("invalid sender address")
+	ErrorInvalidCallBackUrl      = errors.New("invalid call back url")
+	ErrUnableToSendEmailMessage  = errors.New("unable to send email message")
+	ErrUnableToSendSmsMessage    = errors.New("unable to send sms message")
+	ErrDatabaseConnection         =errors.New("database connection failed")
 )
 
 // Descriptions error description
@@ -86,11 +93,18 @@ var Descriptions = map[error]string{
 	ErrInvalidMessage:                 "provided message is Invalid",
 	ErrToManyRegIDs:                   "too many registration id exist",
 	ErrorUnableToCreate:               "unable to create",
-	ErrInvalidToken:                    "Invalid notification token was provided",
-	ErrDataAlreayExist:                 "provided data is already exist",
-	ErrorUnableToBindJsonToStruct:       "unable to parse json to struct",
-	ErrorUnableToConvert:                 "unable to convert type conversion",
-	ErrInvalidVariable:                   "unable to process the provided variable",
+	ErrInvalidToken:                   "Invalid notification token was provided",
+	ErrDataAlreayExist:                "provided data is already exist",
+	ErrorUnableToBindJsonToStruct:     "unable to parse json to struct",
+	ErrorUnableToConvert:              "unable to convert type conversion",
+	ErrInvalidVariable:                "unable to process the provided variable",
+	ErrorInvalidRecieverAddress:       "unable to find receiver address",
+	ErrorInvalidSenderAddress:         "unable to send text message due to invalid sender address provided ",
+	ErrorInvalidBody:                  "the body of message must not be empty ",
+	ErrorInvalidCallBackUrl:           "sms not sent due to invalid call back url is provided ",
+	ErrUnableToSendEmailMessage:       "unable to send email message please try again",
+	ErrUnableToSendSmsMessage:         "unable to send sms message please try again",
+	ErrDatabaseConnection:              "error occurred while establishing a database connection",
 }
 
 // StatusCodes response error HTTP status code
@@ -122,6 +136,13 @@ var StatusCodes = map[error]int{
 	ErrorUnableToBindJsonToStruct:     400,
 	ErrorUnableToConvert:              403,
 	ErrInvalidVariable:                406,
+	ErrorInvalidRecieverAddress:       400,
+	ErrorInvalidSenderAddress:         400,
+	ErrorInvalidBody:                  400,
+	ErrorInvalidCallBackUrl:           400,
+	ErrUnableToSendEmailMessage:       400,
+	ErrUnableToSendSmsMessage:         400,
+	ErrDatabaseConnection:             500,
 }
 
 // StatusCodes response error HTTP status code
@@ -154,6 +175,13 @@ var ErrCodes = map[error]int{
 	ErrInvalidToken:                   4021,
 	ErrDataAlreayExist:                4022,
 	ErrorUnableToBindJsonToStruct:     4023,
-	ErrorUnableToConvert:               4024,
-	ErrInvalidVariable:                 4025,
+	ErrorUnableToConvert:              4024,
+	ErrInvalidVariable:                4025,
+	ErrorInvalidRecieverAddress:       4026,
+	ErrorInvalidSenderAddress:         4027,
+	ErrorInvalidBody:                  4028,
+	ErrorInvalidCallBackUrl:           4029,
+	ErrUnableToSendEmailMessage:       4030,
+	ErrUnableToSendSmsMessage:         4031,
+	ErrDatabaseConnection:             4032,
 }
