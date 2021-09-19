@@ -12,6 +12,7 @@ import (
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"log"
+	"os"
 	"template/internal/adapter/glue/routing"
 	compHandler "template/internal/adapter/http/rest/server/company"
 	email3 "template/internal/adapter/http/rest/server/notification/email"
@@ -45,8 +46,8 @@ var (
 
 func Initialize() {
 	//loading environmental variables
-	err := godotenv.Load(".env")
-	fmt.Println("env err ", err )
+	err := godotenv.Load("../.env")
+	fmt.Println("env err ", err ,os.Getenv("DB_PASS"))
 	if err != nil {
 
 		log.Fatalf("Error loading .env file")
@@ -86,17 +87,6 @@ func Initialize() {
 	smsPersistent := sms.SmsInit(dbConn)
 	publisherPersistent := publisher.NotificationInit(dbConn)
 	err = emailPersistent.MigrateEmail()
-	if err != nil {
-		log.Fatal("error while creating models %s",err)
-	}
-	err = smsPersistent.MigrateSms()
-	if err != nil {
-		log.Fatal("error while creating models %s",err)
-	}
-	err = publisherPersistent.MigrateNotification()
-	if err != nil {
-		log.Fatal("error while creating models %s",err)
-	}
 
 	//notification services
 	emailUsecase := email2.InitializeEmail(emailPersistent)
