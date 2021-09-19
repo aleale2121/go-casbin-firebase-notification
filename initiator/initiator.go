@@ -1,8 +1,6 @@
 package initiator
 
 import (
-	"fmt"
-	"github.com/joho/godotenv"
 	gomail "gopkg.in/mail.v2"
 	"log"
 	"net/http"
@@ -56,13 +54,7 @@ var (
 )
 
 func Initialize() {
-	//loading environmental variables
-	err := godotenv.Load("../.env")
-	fmt.Println("env err ", err ,os.Getenv("DB_PASS"))
-	if err != nil {
 
-		log.Fatalf("Error loading .env file")
-	}
 	en := en.New()
 	uni := ut.New(en, en)
 	trans, _ = uni.GetTranslator("en")

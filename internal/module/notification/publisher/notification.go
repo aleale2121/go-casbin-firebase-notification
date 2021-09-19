@@ -26,7 +26,7 @@ func (s service) PushSingleNotification(notification model.PushedNotification) (
 		errorData:=errors.NewErrorResponse(errors.ErrInvalidAPIKey)
 		return nil, &errorData
 	}
-	if notification.Token == nil {
+	if notification.Token == "" {
 		errorData:=errors.NewErrorResponse(errors.ErrInvalidToken)
 		return nil, &errorData
 	}
@@ -69,8 +69,3 @@ func (s service) GetCountUnreadPushNotificationMessages() int64 {
 	count:=s.GetCountUnreadPushNotificationMessages()
 	return count
 }
-
-
-
-
-

@@ -96,7 +96,7 @@ func (n emailHandler) GetCountUnreadEmailMessages(c *gin.Context) {
 //SendEmail sends email message via SMTP server
 func SendEmail(email model.EmailNotification, m *gomail.Message) error {
 	m.SetHeader("From", email.From)
-	m.SetHeader("To", email.To...)
+	m.SetHeader("To", email.To)
 	m.SetHeader("Subject", email.Subject)
 	m.SetBody("text/plain", email.Body)
 	port, err := strconv.Atoi(os.Getenv("SMTP_PORT"))
