@@ -34,7 +34,7 @@ type EmailNotification struct {
 	EmailMessageID uuid.UUID `json:"email_message_id" gorm:"primaryKey;type:uuid;default:uuid_generate_v4()"`
 	Body           string    `json:"body" validator:"required"`
 	From           string    `json:"from" validator:"required"`
-	To             string    `json:"to"`
+	To             []string    `json:"to"`
 	Subject        string    `json:"subject"`
 	Status          string `json:"status"`
 	CreatedAt      time.Time `json:"created_at"`
