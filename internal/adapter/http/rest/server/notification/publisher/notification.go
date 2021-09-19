@@ -20,11 +20,11 @@ type NotificationHandler interface {
 }
 //notificationHandler implements notification servicea and goalang validator object
 type notificationHandler struct {
-	notificationUseCase notification.Usecase
+	notificationUseCase publisher.Usecase
 	validate            *validator.Validate
 }
 //NewNotificationHandler  initializes notification services and golang validator
-func NewNotificationHandler(notfCase notification.Usecase, valid *validator.Validate) NotificationHandler {
+func NewNotificationHandler(notfCase publisher.Usecase, valid *validator.Validate) NotificationHandler {
 	return &notificationHandler{
 		notificationUseCase: notfCase,
 		validate:            valid,
@@ -70,21 +70,8 @@ func (n notificationHandler) GetNotifications(c *gin.Context) {
 //PushNotification pushes message via valid device token
 func (n notificationHandler) PushNotification(c *gin.Context) {
 	notification := c.MustGet("x-notification").(model.PushedNotification)
-	successData, errData := n.notificationUseCase.PushSingleNotification(notification)
-	if errData != nil {
-		code, err := strconv.Atoi(errData.ErrorCode)
-		if err != nil {
-			errValue := errors.ErrorModel{
-				ErrorCode:        strconv.Itoa(errors.StatusCodes[errors.ErrorUnableToConvert]),
-				ErrorDescription: errors.Descriptions[errors.ErrorUnableToConvert],
-				ErrorMessage:     errors.ErrorUnableToConvert.Error(),
-			}
-			constant.ResponseJson(c, errValue, errors.StatusCodes[errors.ErrorUnableToConvert])
-		}
-		constant.ResponseJson(c, *errData, code)
-	}
 	// TODO:01 push notification code put here
-	data:=successData.Data.(model.PushedNotification)
+	data:=notification
 	msg := &fcm.Message{
 		To: data.Data,
 		Data: map[string]interface{}{"greet":data.Data,"api_key":data.ApiKey},

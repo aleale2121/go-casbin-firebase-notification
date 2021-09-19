@@ -1,6 +1,7 @@
 package initiator
 
 import (
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/locales/en"
 	ut "github.com/go-playground/universal-translator"
@@ -43,6 +44,13 @@ var (
 )
 
 func Initialize() {
+	//loading environmental variables
+	err := godotenv.Load(".env")
+	fmt.Println("env err ", err )
+	if err != nil {
+
+		log.Fatalf("Error loading .env file")
+	}
 	en := en.New()
 	uni := ut.New(en, en)
 	trans, _ = uni.GetTranslator("en")
@@ -58,18 +66,15 @@ func Initialize() {
 	//	os.Exit(1)
 	//}
 	connStr, _ := constant.DbConnectionString()
+	fmt.Println("conn ",connStr)
 	dbConn, err := gorm.Open(postgres.Open(connStr), &gorm.Config{})
 	if err != nil {
-         log.Fatal("error ",errors.ErrDatabaseConnection)
+         log.Fatal("error: ",errors.ErrDatabaseConnection)
 	}
 	x, _ := dbConn.DB()
 	defer x.Close()
 	dbConn = dbConn.Debug()
-	//loading environmental variables
-	err = godotenv.Load(".env")
-	if err != nil {
-		log.Fatalf("Error loading .env file")
-	}
+
 
 	//user and role
 	usrPersistence := user.UserInit(dbConn)

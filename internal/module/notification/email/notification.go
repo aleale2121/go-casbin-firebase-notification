@@ -12,7 +12,7 @@ func (s service) SendEmailMessage(email model.EmailNotification) (*constant.Succ
 		errorData:=errors.NewErrorResponse(errors.ErrorInvalidSenderAddress)
 		return nil, &errorData
 	}
-	if email.To == "" {
+	if len(email.To) == 0 {
 		errorData:=errors.NewErrorResponse(errors.ErrorInvalidRecieverAddress)
 		return nil, &errorData
 	}
