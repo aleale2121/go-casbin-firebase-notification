@@ -69,6 +69,9 @@ var (
 	ErrRoleNameISEmpty		  =errors.New("role name cannot be empty")
 
 	ErrGenerateToken         =errors.New("unable to generate token")
+
+	ErrPermissionAlreadyDefined         =errors.New("permission already defined")
+	ErrPermissionPermissionNotFound      =errors.New("permission not found")
 )
 
 // Descriptions error description
@@ -108,9 +111,11 @@ var Descriptions = map[error]string{
 	ErrorInvalidCallBackUrl:           "sms not sent due to invalid call back url is provided ",
 	ErrUnableToSendEmailMessage:       "unable to send email message please try again",
 	ErrUnableToSendSmsMessage:         "unable to send sms message please try again",
-	ErrDatabaseConnection:              "error occurred while establishing a database connection",
-	ErrRoleNameISEmpty:					"role name cannot be empty",
-	ErrGenerateToken:                   "unable to generate token",
+	ErrDatabaseConnection:             "error occurred while establishing a database connection",
+	ErrRoleNameISEmpty:				   "role name cannot be empty",
+	ErrGenerateToken:                  "unable to generate token",
+	ErrPermissionAlreadyDefined:       "permission already defined",
+	ErrPermissionPermissionNotFound:   "permission not found",
 }
 
 // StatusCodes response error HTTP status code
@@ -151,6 +156,8 @@ var StatusCodes = map[error]int{
 	ErrDatabaseConnection:             500,
 	ErrRoleNameISEmpty:				   400,
 	ErrGenerateToken:                  500,
+	ErrPermissionAlreadyDefined:       400,
+	ErrPermissionPermissionNotFound:   400,
 }
 
 // StatusCodes response error HTTP status code
@@ -194,4 +201,6 @@ var ErrCodes = map[error]int{
 	ErrDatabaseConnection:             4032,
 	ErrRoleNameISEmpty:				   4033,
 	ErrGenerateToken:                  4034,
+	ErrPermissionAlreadyDefined:       4035,
+	ErrPermissionPermissionNotFound:   4036,
 }

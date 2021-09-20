@@ -123,10 +123,8 @@ func Initialize() {
 	permHandler := permHandler.PermissionInit(casbinAuth,validate, trans)
 
 	router := gin.Default()
-
-	router.Use(authHandlers.Authorizer(e))
 	router.Use(corsMW())
-
+	router.Use(authHandlers.Authorizer(e))
 	v1 := router.Group("/v1")
 	routing.UserRoutes(v1, usrHandler)
 	routing.CompanyRoutes(v1, compHandler)

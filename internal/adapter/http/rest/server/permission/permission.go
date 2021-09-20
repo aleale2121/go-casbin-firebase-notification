@@ -72,8 +72,7 @@ func (n permissionHandler) StorePersmision(c *gin.Context) {
 	err := n.casbinAuth.AddPolicy(addP)
 
 	if err != nil {
-		c.JSON(errModel.GetStatusCode(err),err)
-
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
     c.JSON(200,addP)
@@ -86,8 +85,7 @@ func (uh permissionHandler) DeletePersmision(c *gin.Context) {
 	err := uh.casbinAuth.RemovePolicy(addP)
 
 	if err != nil {
-		c.JSON(errModel.GetStatusCode(err),err)
-
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
     c.JSON(200,addP)

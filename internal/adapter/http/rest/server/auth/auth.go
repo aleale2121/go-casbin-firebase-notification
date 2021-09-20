@@ -30,7 +30,13 @@ func NewAuthHandler(authUseCase auth.UseCase) AuthHandler {
 		authUseCase: authUseCase,
 	}
 }
-
+var actions = map[string]string{
+	"GET": 		"read",
+	"POST": 	"create",
+	"PUT":  	"update",
+	"DELETE": 	"delete",
+	"PATCH":    "update",
+}
 //Authorizer is a middleware for authorization
 func (n *authHandler) Authorizer(e *casbin.Enforcer) gin.HandlerFunc {
 	log.Println("authorizer")
@@ -60,7 +66,7 @@ func (n *authHandler) Authorizer(e *casbin.Enforcer) gin.HandlerFunc {
 		log.Printf("%v %v %v", role, c.Request.URL.Path, c.Request.Method)
 
 		e.LoadPolicy()
-		res, err := e.Enforce(role, c.Request.URL.Path, c.Request.Method)
+		res, err := e.Enforce(role, c.Request.URL.Path, actions[c.Request.Method])
 		if err != nil {
 			log.Println("Error enforcing the casbin rules", err)
 			c.AbortWithStatus(http.StatusUnauthorized)
