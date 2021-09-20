@@ -65,6 +65,10 @@ var (
 	ErrUnableToSendEmailMessage  = errors.New("unable to send email message")
 	ErrUnableToSendSmsMessage    = errors.New("unable to send sms message")
 	ErrDatabaseConnection         =errors.New("database connection failed")
+
+	ErrRoleNameISEmpty		  =errors.New("role name cannot be empty")
+
+	ErrGenerateToken         =errors.New("unable to generate token")
 )
 
 // Descriptions error description
@@ -105,6 +109,8 @@ var Descriptions = map[error]string{
 	ErrUnableToSendEmailMessage:       "unable to send email message please try again",
 	ErrUnableToSendSmsMessage:         "unable to send sms message please try again",
 	ErrDatabaseConnection:              "error occurred while establishing a database connection",
+	ErrRoleNameISEmpty:					"role name cannot be empty",
+	ErrGenerateToken:                   "unable to generate token",
 }
 
 // StatusCodes response error HTTP status code
@@ -143,6 +149,8 @@ var StatusCodes = map[error]int{
 	ErrUnableToSendEmailMessage:       400,
 	ErrUnableToSendSmsMessage:         400,
 	ErrDatabaseConnection:             500,
+	ErrRoleNameISEmpty:				   400,
+	ErrGenerateToken:                  500,
 }
 
 // StatusCodes response error HTTP status code
@@ -184,4 +192,6 @@ var ErrCodes = map[error]int{
 	ErrUnableToSendEmailMessage:       4030,
 	ErrUnableToSendSmsMessage:         4031,
 	ErrDatabaseConnection:             4032,
+	ErrRoleNameISEmpty:				   4033,
+	ErrGenerateToken:                  4034,
 }

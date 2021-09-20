@@ -1,17 +1,15 @@
 package permission
 
 import (
-	"errors"
 	"net/http"
-	// "strconv"
 	errModel "template/internal/constant/errors"
 	"template/internal/constant/model"
 	"template/platform/casbin"
 
 	"github.com/gin-gonic/gin"
 
+	"github.com/go-playground/validator/v10"
 	ut "github.com/go-playground/universal-translator"
-	"github.com/go-playground/validator"
 )
 
 // PermissionHandler contans a function of handlers for the domian file
@@ -26,17 +24,20 @@ type PermissionHandler interface {
 // userHandler defines all the things neccessary for users handlers
 type permissionHandler struct {
 	casbinAuth casbin.CasbinAuth
+	validate   *validator.Validate
 	trans       ut.Translator
 }
 
 //PermissionInit initializes a user handler for the domin permission
 func PermissionInit(
 	casbinAuth casbin.CasbinAuth,
+	validate   *validator.Validate,
 	 trans ut.Translator,
 
 	 ) PermissionHandler {
 	return &permissionHandler{
 		casbinAuth,
+		validate,
 		trans,
 
 	}
@@ -45,14 +46,15 @@ func (n permissionHandler) MiddleWareValidatePermission(c *gin.Context) {
 	permX := model.Permision{}
 	err := c.Bind(&permX)
 	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"errors": errModel.NewErrorResponse(err)})
+		return
+	}
+	valErr := n.validate.Struct(permX)
 
-		var verr validator.ValidationErrors
-
-		if errors.As(err, &verr) {
-			c.JSON(http.StatusBadRequest, gin.H{"errors": verr.Translate(n.trans)})
-			return
-		}
-		c.JSON(http.StatusBadRequest, gin.H{"errors": errModel.NewErrorResponse(errModel.ErrUnknown)})
+	if valErr != nil {
+		errs := valErr.(validator.ValidationErrors)
+		valErr := errs.Translate(n.trans)
+		c.JSON(http.StatusBadRequest, gin.H{"errors":valErr})
 		return
 	}
 
@@ -76,27 +78,6 @@ func (n permissionHandler) StorePersmision(c *gin.Context) {
 	}
     c.JSON(200,addP)
 }
-
-// Persmision gets a permission by id
-// func (uh permissionHandler) Persmision(c *gin.Context) {
-
-// 	ID := c.Param("id")
-
-// 	id, err := strconv.Atoi(ID)
-// 	if err != nil {
-// 		c.JSON(http.StatusBadRequest, gin.H{"errors": errModel.NewErrorResponse(err)})
-// 		return
-// 	}
-
-// 	perm, err := uh.permisionUsecase.Persmision(uint(id))
-// 	if err != nil {
-// 		c.JSON(http.StatusInternalServerError, gin.H{"errors": errModel.NewErrorResponse(err)})
-// 		return
-// 	}
-
-// 	c.JSON(http.StatusOK, gin.H{"permission": perm})
-
-// }
 
 // DeletePermission deletes user by id
 func (uh permissionHandler) DeletePersmision(c *gin.Context) {

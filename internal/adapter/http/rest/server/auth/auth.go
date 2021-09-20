@@ -1,7 +1,7 @@
 package auth
 
 import (
-	"encoding/json"
+	// "encoding/json"
 	"errors"
 	"log"
 	"net/http"
@@ -47,7 +47,7 @@ func (n *authHandler) Authorizer(e *casbin.Enforcer) gin.HandlerFunc {
 		}
 		if claims != nil {
 			log.Println("----claim")
-			log.Println(json.MarshalIndent(claims,"","  "))
+			// log.Println(json.MarshalIndent(claims,"","  "))
 			role = claims.Role
 
 			c.Set("x-userid", claims.Subject)
@@ -92,7 +92,7 @@ func (n authHandler) Login(c *gin.Context) {
 			c.JSON(http.StatusBadRequest, gin.H{"errors": err})
 			return
 		}
-		c.JSON(http.StatusBadRequest, gin.H{"errors": appErr.NewErrorResponse(appErr.ErrUnknown)})
+		c.JSON(http.StatusBadRequest, gin.H{"errors": appErr.NewErrorResponse(err)})
 		return
 	}
 	c.JSON(http.StatusCreated, gin.H{"user": loginResponse})

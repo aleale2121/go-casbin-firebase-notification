@@ -8,7 +8,7 @@ import (
 	"template/internal/module/role"
 
 	ut "github.com/go-playground/universal-translator"
-	"github.com/go-playground/validator"
+	"github.com/go-playground/validator/v10"
 	"github.com/gin-gonic/gin"
 )
 
@@ -21,27 +21,37 @@ type RolesHandler interface {
 }
 type rolesHandler struct {
 	roleUseCase        role.UseCase
+	validate   *validator.Validate
 	trans       ut.Translator
 
 }
 
-func NewRoleHandler(useCase role.UseCase,trans ut.Translator) RolesHandler {
-	return &rolesHandler{roleUseCase: useCase,trans: trans}
+func NewRoleHandler(useCase role.UseCase,trans ut.Translator,validate   *validator.Validate) RolesHandler {
+	return &rolesHandler{roleUseCase: useCase,trans: trans,validate: validate}
 }
 func (n rolesHandler) MiddleWareValidateRole(c *gin.Context) {
 	roleX := model.Role{}
 	err := c.Bind(&roleX)
 	if err != nil {
-		
+
 		var verr validator.ValidationErrors
 
 		if errs.As(err, &verr) {
 			c.JSON(http.StatusBadRequest, gin.H{"errors": verr.Translate(n.trans)})
 			return
 		}
-		c.JSON(http.StatusBadRequest, gin.H{"errors": errors.NewErrorResponse(errors.ErrUnknown)})
+		c.JSON(http.StatusBadRequest, gin.H{"errors":errors.NewErrorResponse(err)})
 		return
 	}
+	valErr := n.validate.Struct(roleX)
+
+	if valErr != nil {
+		errs := valErr.(validator.ValidationErrors)
+		valErr := errs.Translate(n.trans)
+		c.JSON(http.StatusBadRequest, gin.H{"errors":valErr})
+		return
+	}
+
 
 	c.Set("x-role", roleX)
 	c.Next()

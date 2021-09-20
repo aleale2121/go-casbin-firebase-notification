@@ -107,7 +107,7 @@ func Initialize() {
 
 
 	roleUsecase := roleUsecase.RoleInitialize(rolePersistent)
-	roleHandler := rlHandler.NewRoleHandler(roleUsecase, trans)
+	roleHandler := rlHandler.NewRoleHandler(roleUsecase,trans,validate)
 
 	usrRepo := repository.UserInit()
 	usrUsecase := usrUsecase.Initialize(usrRepo, usrPersistence, validate, trans)
@@ -121,7 +121,7 @@ func Initialize() {
 	compHandler := compHandler.CompanyInit(compUsecase, trans)
 
 	casbinAuth:=casAuth.NewCasbin(e)
-	permHandler := permHandler.PermissionInit(casbinAuth, trans)
+	permHandler := permHandler.PermissionInit(casbinAuth,validate, trans)
 
 	router := gin.Default()
 
