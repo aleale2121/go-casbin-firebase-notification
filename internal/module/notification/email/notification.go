@@ -6,23 +6,24 @@ import (
 	"template/internal/constant/errors"
 	"template/internal/constant/model"
 )
+
 //SendEmailMessage send email message  to one or more users
 func (s service) SendEmailMessage(email model.EmailNotification) (*constant.SuccessData, *errors.ErrorModel) {
 	if email.From == "" {
-		errorData:=errors.NewErrorResponse(errors.ErrorInvalidSenderAddress)
+		errorData := errors.NewErrorResponse(errors.ErrorInvalidSenderAddress)
 		return nil, &errorData
 	}
 	if len(email.To) == 0 {
-		errorData:=errors.NewErrorResponse(errors.ErrorInvalidRecieverAddress)
+		errorData := errors.NewErrorResponse(errors.ErrorInvalidRecieverAddress)
 		return nil, &errorData
 	}
 	if email.Body == "" {
-		errorData:=errors.NewErrorResponse(errors.ErrorInvalidBody)
+		errorData := errors.NewErrorResponse(errors.ErrorInvalidBody)
 		return nil, &errorData
 	}
 	emailnotification, err := s.emailPersistance.SendEmailMessage(email)
 	if err != nil {
-		errorData:=errors.NewErrorResponse(errors.ErrUnableToSendEmailMessage)
+		errorData := errors.NewErrorResponse(errors.ErrUnableToSendEmailMessage)
 		return nil, &errorData
 	}
 	return &constant.SuccessData{
@@ -30,12 +31,9 @@ func (s service) SendEmailMessage(email model.EmailNotification) (*constant.Succ
 		Data: emailnotification,
 	}, nil
 }
+
 //GetCountUnreadEmailMessages returns count of unread Email notification message
 func (s service) GetCountUnreadEmailMessages() int64 {
-	count:=s.GetCountUnreadEmailMessages()
+	count := s.emailPersistance.GetCountUnreadEmailMessages()
 	return count
 }
-
-
-
-

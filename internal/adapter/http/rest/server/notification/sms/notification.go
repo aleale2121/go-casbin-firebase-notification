@@ -13,22 +13,25 @@ import (
 	"template/internal/constant/model"
 	"template/internal/module/notification/sms"
 )
+
 //SmsHandler contains all handler interfaces
 type SmsHandler interface {
 	MiddleWareValidateSmsMessage(c *gin.Context)
 	SendSmsMessage(c *gin.Context)
 	GetCountUnreadSMsMessages(c *gin.Context)
 }
+
 //smsHandler implements sms servicea and golang validator object
 type smsHandler struct {
-	smsUseCase        sms.Usecase
-	validate            *validator.Validate
+	smsUseCase sms.Usecase
+	validate   *validator.Validate
 }
 
 //NewSmsHandler  initializes notification services and golang validator
 func NewSmsHandler(s sms.Usecase, valid *validator.Validate) SmsHandler {
-	return &smsHandler{smsUseCase: s, validate:    valid,}
+	return &smsHandler{smsUseCase: s, validate: valid}
 }
+
 //MiddleWareValidateSmsMessage binds sms data SMS struct
 func (n smsHandler) MiddleWareValidateSmsMessage(c *gin.Context) {
 	sms := model.SMS{}
@@ -40,18 +43,23 @@ func (n smsHandler) MiddleWareValidateSmsMessage(c *gin.Context) {
 			ErrorMessage:     errors.ErrInvalidRequest.Error(),
 		}
 		constant.ResponseJson(c, errValue, errors.StatusCodes[errors.ErrInvalidRequest])
+		return
 	}
 	errV := constant.StructValidator(sms, n.validate)
 	if errV != nil {
 		constant.ResponseJson(c, errV, errors.StatusCodes[errors.ErrorUnableToBindJsonToStruct])
+		return
 	}
 	c.Set("x-sms", sms)
-	c.Next()
+	//c.Next()
 }
+
 //SendSmsMessage  sends sms message to a user via phone number
 func (n smsHandler) SendSmsMessage(c *gin.Context) {
+	n.MiddleWareValidateSmsMessage(c)
 	sms := c.MustGet("x-sms").(model.SMS)
 	// TODO:01 sms notification code put here
+	fmt.Println("TODO 01")
 	_, err := SendSmsMessage(sms)
 	if err != nil {
 		errValue := errors.ErrorModel{
@@ -60,20 +68,27 @@ func (n smsHandler) SendSmsMessage(c *gin.Context) {
 			ErrorMessage:     errors.ErrUnableToSendSmsMessage.Error(),
 		}
 		constant.ResponseJson(c, errValue, errors.StatusCodes[errors.ErrorUnableToConvert])
+		return
 	}
 	// TODO:02 sms notification data store in the database put here
-	data,errData:=n.smsUseCase.SendSmsMessage(sms)
-	if errData!= nil {
-		code, _ :=strconv.Atoi(errData.ErrorCode)
+	fmt.Println("<<< TODO:02 >>>")
+	data, errData := n.smsUseCase.SendSmsMessage(sms)
+	fmt.Println("err ", errData)
+	if errData != nil {
+		code, _ := strconv.Atoi(errData.ErrorCode)
 		constant.ResponseJson(c, *errData, code)
+		return
 	}
 	constant.ResponseJson(c, *data, data.Code)
+	return
 }
+
 //GetCountUnreadSMsMessages counts unread sms message
 func (n smsHandler) GetCountUnreadSMsMessages(c *gin.Context) {
-	count:=n.smsUseCase.GetCountUnreadSmsMessages()
+	count := n.smsUseCase.GetCountUnreadSmsMessages()
 	constant.ResponseJson(c, map[string]interface{}{"count": count}, http.StatusOK)
 }
+
 //SendSmsMessage sends sms message via phone number
 func SendSmsMessage(sms model.SMS) (interface{}, error) {
 	reqString := fmt.Sprintf(`
@@ -92,7 +107,7 @@ func SendSmsMessage(sms model.SMS) (interface{}, error) {
 	// post some data
 	res, err := http.Post(sms.ApiGateWay, "application/json; charset=UTF-8", requestBody)
 	if err != nil {
-		return nil,errors.ErrUnableToSendSmsMessage
+		return nil, errors.ErrUnableToSendSmsMessage
 	}
 	if !(res.StatusCode >= 200 && res.StatusCode < 300) {
 		return nil, errors.ErrUnableToSendSmsMessage
