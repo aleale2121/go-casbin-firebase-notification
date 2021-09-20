@@ -1,35 +1,37 @@
 package initiator
 
 import (
+	"github.com/casbin/casbin/v2"
+	gormadapter "github.com/casbin/gorm-adapter/v3"
 	gomail "gopkg.in/mail.v2"
 	"log"
 	"net/http"
 	"os"
 	routing "template/internal/adapter/glue/routing"
 	authHandler "template/internal/adapter/http/rest/server/auth"
-	permHandler "template/internal/adapter/http/rest/server/permission"
 	compHandler "template/internal/adapter/http/rest/server/company"
 	email3 "template/internal/adapter/http/rest/server/notification/email"
 	publisher3 "template/internal/adapter/http/rest/server/notification/publisher"
 	sms3 "template/internal/adapter/http/rest/server/notification/sms"
+	permHandler "template/internal/adapter/http/rest/server/permission"
 	rlHandler "template/internal/adapter/http/rest/server/role"
 	usrHandler "template/internal/adapter/http/rest/server/user"
 	"template/internal/adapter/repository"
 	"template/internal/adapter/storage/persistence/company"
-	"template/internal/adapter/storage/persistence/role"
-	"template/internal/constant/model"
-	authUsecase "template/internal/module/auth"
 	"template/internal/adapter/storage/persistence/notification/email"
 	"template/internal/adapter/storage/persistence/notification/publisher"
 	"template/internal/adapter/storage/persistence/notification/sms"
+	"template/internal/adapter/storage/persistence/role"
 	"template/internal/adapter/storage/persistence/user"
+	"template/internal/constant/model"
+	authUsecase "template/internal/module/auth"
 	compUsecase "template/internal/module/company"
 	email2 "template/internal/module/notification/email"
 	publisher2 "template/internal/module/notification/publisher"
 	sms2 "template/internal/module/notification/sms"
 	roleUsecase "template/internal/module/role"
 	usrUsecase "template/internal/module/user"
-    casAuth "template/platform/casbin"
+	casAuth "template/platform/casbin"
 	// "github.com/casbin/casbin/v2"
 	// gormadapter "github.com/casbin/gorm-adapter/v3"
 	"github.com/go-playground/locales/en"
@@ -40,8 +42,8 @@ import (
 	"github.com/gin-gonic/gin"
 	en_translations "github.com/go-playground/validator/v10/translations/en"
 
-	"github.com/casbin/casbin/v2"
-	gormadapter "github.com/casbin/gorm-adapter/v3"
+	//"github.com/casbin/casbin/v2"
+	//gormadapter "github.com/casbin/gorm-adapter/v3"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
@@ -70,11 +72,10 @@ func Initialize() {
 		os.Exit(1)
 	}
 
-
-	conn.AutoMigrate(&model.Role{}, &model.User{}, &model.UserCompanyRole{},  &model.Company{})
+	conn.AutoMigrate(&model.Role{}, &model.User{}, &model.UserCompanyRole{}, &model.Company{})
 
 	a, _ := gormadapter.NewAdapterByDBWithCustomTable(conn, &model.CasbinRule{})
-	e ,err:= casbin.NewEnforcer("../../rbac_model.conf", a)
+	e, err := casbin.NewEnforcer("../../rbac_model.conf", a)
 	if err != nil {
 		panic(err)
 	}
@@ -83,13 +84,12 @@ func Initialize() {
 	compPersistence := company.CompanyInit(conn)
 	rolePersistent := role.RoleInit(conn)
 
-
 	//notification persistence
 	emailPersistent := email.EmailInit(conn)
 	smsPersistent := sms.SmsInit(conn)
 	publisherPersistent := publisher.NotificationInit(conn)
 	err = emailPersistent.MigrateEmail()
-    if err != nil {
+	if err != nil {
 		panic(err)
 	}
 
@@ -101,10 +101,9 @@ func Initialize() {
 	//notification handlers
 	m := gomail.NewMessage()
 	v := validator.New()
-	emailHandler :=email3.NewEmailHandler(emailUsecase,v,m)
-	smsHandler :=sms3.NewSmsHandler(smsUsecase,v)
-	publisherHandler :=publisher3.NewNotificationHandler(publisherUsecase,v)
-
+	emailHandler := email3.NewEmailHandler(emailUsecase, v, m)
+	smsHandler := sms3.NewSmsHandler(smsUsecase, v)
+	publisherHandler := publisher3.NewNotificationHandler(publisherUsecase, v)
 
 	roleUsecase := roleUsecase.RoleInitialize(rolePersistent)
 	roleHandler := rlHandler.NewRoleHandler(roleUsecase,trans,validate)
@@ -114,7 +113,7 @@ func Initialize() {
 	usrHandler := usrHandler.UserInit(usrUsecase, trans)
 
 	jwtManager := authUsecase.NewJWTManager("secret")
-	authUsecases := authUsecase.Initialize(usrPersistence,*jwtManager)
+	authUsecases := authUsecase.Initialize(usrPersistence, *jwtManager)
 	authHandlers := authHandler.NewAuthHandler(authUsecases)
 
 	compUsecase := compUsecase.Initialize(compPersistence, validate, trans)
@@ -134,7 +133,7 @@ func Initialize() {
 	routing.RoleRoutes(v1, roleHandler)
 	routing.PermissionRoutes(v1, permHandler)
 	routing.AuthRoutes(v1, authHandlers)
-		//notification
+	//notification
 	routing.EmailRoutes(v1, emailHandler)
 	routing.SmsRoutes(v1, smsHandler)
 	routing.PublisherRoutes(v1, publisherHandler)

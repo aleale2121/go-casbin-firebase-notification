@@ -1,6 +1,7 @@
 package sms
 
 import (
+	"fmt"
 	"net/http"
 	"template/internal/constant"
 	"template/internal/constant/errors"
@@ -10,16 +11,17 @@ import (
 //SendSmsMessage send sms message via phone numbers
 func (s service) SendSmsMessage(sms model.SMS) (*constant.SuccessData, *errors.ErrorModel) {
 	if sms.ApiGateWay == "" {
-		errorData:=errors.NewErrorResponse(errors.ErrInvalidAPIKey)
+		errorData := errors.NewErrorResponse(errors.ErrInvalidAPIKey)
 		return nil, &errorData
 	}
 	if sms.CallBackUrl == "" {
-		errorData:=errors.NewErrorResponse(errors.ErrorInvalidCallBackUrl)
+		errorData := errors.NewErrorResponse(errors.ErrorInvalidCallBackUrl)
 		return nil, &errorData
 	}
 	newnotification, err := s.smsPersistance.SendSmsMessage(sms)
+	fmt.Println("err perst ", err)
 	if err != nil {
-		errorData:=errors.NewErrorResponse(errors.ErrUnableToSendSmsMessage)
+		errorData := errors.NewErrorResponse(errors.ErrUnableToSendSmsMessage)
 		return nil, &errorData
 	}
 	return &constant.SuccessData{
@@ -28,13 +30,9 @@ func (s service) SendSmsMessage(sms model.SMS) (*constant.SuccessData, *errors.E
 	}, nil
 
 }
+
 //GetCountUnreadSmsMessages returns count of unread SMS notification message
 func (s service) GetCountUnreadSmsMessages() int64 {
-	count:=s.GetCountUnreadSmsMessages()
+	count := s.smsPersistance.GetCountUnreadSmsMessages()
 	return count
 }
-
-
-
-
-
