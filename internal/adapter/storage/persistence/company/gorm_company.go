@@ -1,18 +1,18 @@
 package company
 
 import (
+	uuid "github.com/satori/go.uuid"
+	"gorm.io/gorm"
 	"log"
 	"template/internal/constant/errors"
 	"template/internal/constant/model"
-
-	uuid "github.com/satori/go.uuid"
-	"gorm.io/gorm"
 )
 
 type companyGormRepo struct {
 	conn *gorm.DB
 }
 
+//CompanyInit initializes gorm DB
 func CompanyInit(db *gorm.DB) CompanyStorage {
 	return &companyGormRepo{conn: db}
 }

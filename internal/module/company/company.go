@@ -34,11 +34,11 @@ func Initialize(companyPersist company.CompanyStorage, validate *validator.Valid
 		trans,
 	}
 }
-func (s *service)Companies() ([]model.Company, error){
+func (s *service) Companies() ([]model.Company, error) {
 
 	companies, err := s.companyPersist.Companies()
 	if err != nil {
-		return nil,err
+		return nil, err
 	}
 	return companies, nil
 }

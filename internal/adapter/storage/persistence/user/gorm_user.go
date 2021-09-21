@@ -39,7 +39,7 @@ func (repo userGormRepo) CreateSystemUser(user *model.User) (*model.User, error)
 }
 func (repo userGormRepo) UserCompanyRole(param model.UserCompanyRole) (*model.UserCompanyRole, error) {
 	conn := repo.conn
-	userRole:= &model.UserCompanyRole{}
+	userRole := &model.UserCompanyRole{}
 
 	err := conn.Model(&model.UserCompanyRole{}).Where(&param).First(userRole).Error
 	if err != nil {
@@ -72,20 +72,20 @@ func (repo userGormRepo) CreateUser(companyID uuid.UUID, usr *model.User) (*mode
 	}
 
 	role := &model.Role{}
-	err = tx.Where("name = ?",usr.RoleName).First(role).Error
+	err = tx.Where("name = ?", usr.RoleName).First(role).Error
 
 	if err != nil {
 		tx.Rollback()
 		log.Printf("This is the error returned %v", err)
 		return nil, errors.ErrUnknown
 	}
-    parentRole:=""
-	childRole:=""
-	if usr.RoleName=="COMPANY-ADMIN" || usr.RoleName=="COMPANY-CLERK"{
-		parentRole="COMPANY-USER"
-		childRole=usr.RoleName
+	parentRole := ""
+	childRole := ""
+	if usr.RoleName == "COMPANY-ADMIN" || usr.RoleName == "COMPANY-CLERK" {
+		parentRole = "COMPANY-USER"
+		childRole = usr.RoleName
 	}
-	usr.RoleName=parentRole;
+	usr.RoleName = parentRole
 	err = tx.Create(&usr).Error
 	if err != nil {
 		tx.Rollback()

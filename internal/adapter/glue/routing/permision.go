@@ -8,9 +8,8 @@ import (
 
 // UserRoutes registers users routes
 func PermissionRoutes(grp *gin.RouterGroup, prmHandler permission.PermissionHandler) {
-	permGrp:=grp.Group("/permissions")
+	permGrp := grp.Group("/permissions")
 	permGrp.GET("", prmHandler.Persmisions)
-	// permGrp.GET("/:id", prmHandler.Persmision)
-	permGrp.POST("",prmHandler.MiddleWareValidatePermission, prmHandler.StorePersmision)
-	permGrp.DELETE("", prmHandler.MiddleWareValidatePermission,prmHandler.DeletePersmision)
+	permGrp.POST("", prmHandler.MiddleWareValidatePermission, prmHandler.StorePersmision)
+	permGrp.DELETE("", prmHandler.MiddleWareValidatePermission, prmHandler.DeletePersmision)
 }

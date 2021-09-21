@@ -1,10 +1,9 @@
-package permission;
+package permission
 
 import (
 	"template/internal/adapter/storage/persistence"
 	"template/internal/constant/model"
 )
-
 
 type UseCase interface {
 	Persmision(id uint) (*model.CasbinRule, error)
@@ -15,30 +14,28 @@ type UseCase interface {
 }
 type service struct {
 	permPersistence storage.PermissionPersistence
-
 }
 
 func PermissioInitialize(
 	permPersistence storage.PermissionPersistence,
-	) UseCase {
+) UseCase {
 	return &service{
 		permPersistence: permPersistence,
 	}
 }
 
-func (s service) Persmisions()  ([]model.CasbinRule, error) {
-
+func (s service) Persmisions() ([]model.CasbinRule, error) {
 	roles, err := s.permPersistence.Persmisions()
 	if err != nil {
-		return nil,err
+		return nil, err
 	}
 	return roles, nil
 }
 
-func  (s service)  Persmision(id uint) (*model.CasbinRule, error){
+func (s service) Persmision(id uint) (*model.CasbinRule, error) {
 	p, err := s.permPersistence.Persmision(id)
 	if err != nil {
-		return nil,err
+		return nil, err
 	}
 	return p, nil
 }

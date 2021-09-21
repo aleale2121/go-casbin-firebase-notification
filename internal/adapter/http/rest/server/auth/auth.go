@@ -18,7 +18,6 @@ import (
 type AuthHandler interface {
 	Authorizer(e *casbin.Enforcer) gin.HandlerFunc
 	Login(c *gin.Context)
-
 }
 
 type authHandler struct {
@@ -38,18 +37,17 @@ func (n *authHandler) Authorizer(e *casbin.Enforcer) gin.HandlerFunc {
 		role := "anonymous"
 		token := ExtractToken(c.Request)
 		claims, _ := n.authUseCase.GetClaims(token)
-        if e!=nil{
+		if e != nil {
 			log.Println("e is differenet from n")
-		}else{
+		} else {
 			log.Println("e  nill")
 			c.AbortWithStatus(http.StatusUnauthorized)
 
 		}
 		if claims != nil {
 			log.Println("----claim")
-			log.Println(json.MarshalIndent(claims,"","  "))
+			log.Println(json.MarshalIndent(claims, "", "  "))
 			role = claims.Role
-
 			c.Set("x-userid", claims.Subject)
 			c.Set("x-userrole", role)
 

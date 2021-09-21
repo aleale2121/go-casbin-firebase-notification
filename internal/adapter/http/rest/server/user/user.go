@@ -91,7 +91,7 @@ func (uh userHandler) CreateSystemUser(c *gin.Context) {
 		return
 
 	}
-	user, err := uh.userUsecase.CreateSystemUser( &insertUser)
+	user, err := uh.userUsecase.CreateSystemUser(&insertUser)
 
 	if err != nil {
 		if errors.As(err, &errModel.ValErr{}) {
@@ -105,6 +105,7 @@ func (uh userHandler) CreateSystemUser(c *gin.Context) {
 	c.JSON(http.StatusCreated, gin.H{"user": user})
 
 }
+
 // GetUserById gets a user by id
 func (uh userHandler) GetUserById(c *gin.Context) {
 

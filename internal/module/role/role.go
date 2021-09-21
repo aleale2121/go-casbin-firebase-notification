@@ -6,7 +6,6 @@ import (
 	"template/internal/constant/model"
 )
 
-
 type UseCase interface {
 	Role(name string) (*model.Role, error)
 	Roles() ([]model.Role, error)
@@ -24,19 +23,19 @@ func RoleInitialize(rolePersistence storage.RolePersistence) UseCase {
 	}
 }
 
-func (s service) Roles()  ([]model.Role, error) {
+func (s service) Roles() ([]model.Role, error) {
 
 	roles, err := s.rolePersistence.Roles()
 	if err != nil {
-		return nil,err
+		return nil, err
 	}
 	return roles, nil
 }
 
-func (s service) Role(name string)(*model.Role, error) {
+func (s service) Role(name string) (*model.Role, error) {
 	r, err := s.rolePersistence.Role(name)
 	if err != nil {
-		return nil,err
+		return nil, err
 	}
 	return r, nil
 }
@@ -50,6 +49,7 @@ func (s service) DeleteRole(name string) error {
 	}
 	return nil
 }
+
 //TODO define error
 func (s service) StoreRole(role model.Role) (*model.Role, error) {
 	if role.Name == "" {

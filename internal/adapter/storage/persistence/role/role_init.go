@@ -1,11 +1,10 @@
-package role;
+package role
 
 import (
-	"template/internal/constant/model"
-	"template/internal/adapter/storage/persistence"
 	"gorm.io/gorm"
+	"template/internal/adapter/storage/persistence"
+	"template/internal/constant/model"
 )
-
 
 type rolePersistence struct {
 	conn *gorm.DB

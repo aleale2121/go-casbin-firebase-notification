@@ -1,7 +1,7 @@
 package user
 
 import (
-  "template/internal/adapter/repository"
+	"template/internal/adapter/repository"
 	"template/internal/adapter/storage/persistence/user"
 
 	appErr "template/internal/constant/errors"
@@ -28,7 +28,6 @@ type service struct {
 	validate   *validator.Validate
 	trans      ut.Translator
 }
-
 
 // creates a new object with UseCase type
 func Initialize(usrRepo repository.UserRepository, usrPersist user.UserStorage, validate *validator.Validate, trans ut.Translator) Usecase {
@@ -80,7 +79,7 @@ func (s *service) CreateSystemUser(user *model.User) (*model.User, error) {
 		return nil, err
 	}
 
-	usr, err := s.usrPersist.CreateSystemUser( user)
+	usr, err := s.usrPersist.CreateSystemUser(user)
 	if err != nil {
 		return nil, err
 	}

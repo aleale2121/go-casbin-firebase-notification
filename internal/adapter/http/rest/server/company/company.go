@@ -32,13 +32,13 @@ func CompanyInit(compUsecase company.Usecase, trans ut.Translator) CompanyHandle
 }
 
 func (ch companyHandler) Companies(c *gin.Context) {
-  companies, err := ch.compUsecase.Companies()
+	companies, err := ch.compUsecase.Companies()
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"errors": appErr.NewErrorResponse(err)})
 		return
 	}
 
-	c.JSON(http.StatusOK,  companies)
+	c.JSON(http.StatusOK, companies)
 }
 func (ch companyHandler) CreateCompany(c *gin.Context) {
 	var insertCompany model.Company

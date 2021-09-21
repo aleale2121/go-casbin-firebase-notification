@@ -5,6 +5,7 @@ import (
 	"template/internal/constant/errors"
 	"template/internal/constant/model"
 )
+
 //Notifications fetches all available notification
 func (n notificationPersistence) Notifications() ([]model.PushedNotification, error) {
 	conn := n.conn
@@ -19,6 +20,7 @@ func (n notificationPersistence) Notifications() ([]model.PushedNotification, er
 	}
 	return notications, nil
 }
+
 //NotificationByID find pushed notification identified by its id
 func (n notificationPersistence) NotificationByID(parm model.PushedNotification) (*model.PushedNotification, error) {
 	conn := n.conn
@@ -34,6 +36,7 @@ func (n notificationPersistence) NotificationByID(parm model.PushedNotification)
 	}
 	return notification, nil
 }
+
 //PushSingleNotification pushes notification to a single device using firebase cloudy message of api key
 func (n notificationPersistence) PushSingleNotification(notification model.PushedNotification) (*model.PushedNotification, error) {
 	conn := n.conn
@@ -41,12 +44,13 @@ func (n notificationPersistence) PushSingleNotification(notification model.Pushe
 	err := conn.Model(&model.PushedNotification{}).Create(&notification).Error
 	if err != nil {
 		if err == gorm.ErrRegistered {
-			return nil,errors.ErrorUnableToCreate
+			return nil, errors.ErrorUnableToCreate
 		}
 		return nil, errors.ErrInvalidRequest
 	}
 	return &notification, nil
 }
+
 //DeleteNotification removes notification from the resource center (storage)
 func (n notificationPersistence) DeleteNotification(param model.PushedNotification) error {
 	conn := n.conn
@@ -60,6 +64,7 @@ func (n notificationPersistence) DeleteNotification(param model.PushedNotificati
 	}
 	return nil
 }
+
 //MigrateNotification create migration of models
 func (n notificationPersistence) MigrateNotification() error {
 	db := n.conn
@@ -69,6 +74,7 @@ func (n notificationPersistence) MigrateNotification() error {
 	}
 	return nil
 }
+
 //GetCountUnreadPushNotificationMessages  gets number of unread pushed notification
 func (n notificationPersistence) GetCountUnreadPushNotificationMessages() int64 {
 	var count int64

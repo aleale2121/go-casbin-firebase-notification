@@ -3,6 +3,7 @@ package email
 import (
 	"template/internal/constant/model"
 )
+
 //SendEmailMessage send email message to the specified email
 func (e emailPersistence) SendEmailMessage(sms model.EmailNotification) (interface{}, error) {
 	conn := e.conn
@@ -12,6 +13,7 @@ func (e emailPersistence) SendEmailMessage(sms model.EmailNotification) (interfa
 	}
 	return sms, nil
 }
+
 //MigrateEmail create migration of models
 func (e emailPersistence) MigrateEmail() error {
 	db := e.conn
@@ -21,6 +23,7 @@ func (e emailPersistence) MigrateEmail() error {
 	}
 	return nil
 }
+
 //GetCountUnreadEmailMessages fetches all unread email message
 func (e emailPersistence) GetCountUnreadEmailMessages() int64 {
 	var count int64
@@ -28,4 +31,3 @@ func (e emailPersistence) GetCountUnreadEmailMessages() int64 {
 	db.Model(&model.EmailNotification{}).Where("status = ?", "unread").Count(&count)
 	return count
 }
-

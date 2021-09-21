@@ -7,9 +7,9 @@ import (
 	"template/internal/constant/model"
 	"template/internal/module/role"
 
+	"github.com/gin-gonic/gin"
 	ut "github.com/go-playground/universal-translator"
 	"github.com/go-playground/validator"
-	"github.com/gin-gonic/gin"
 )
 
 type RolesHandler interface {
@@ -20,19 +20,18 @@ type RolesHandler interface {
 	DeleteRole(c *gin.Context)
 }
 type rolesHandler struct {
-	roleUseCase        role.UseCase
+	roleUseCase role.UseCase
 	trans       ut.Translator
-
 }
 
-func NewRoleHandler(useCase role.UseCase,trans ut.Translator) RolesHandler {
-	return &rolesHandler{roleUseCase: useCase,trans: trans}
+func NewRoleHandler(useCase role.UseCase, trans ut.Translator) RolesHandler {
+	return &rolesHandler{roleUseCase: useCase, trans: trans}
 }
 func (n rolesHandler) MiddleWareValidateRole(c *gin.Context) {
 	roleX := model.Role{}
 	err := c.Bind(&roleX)
 	if err != nil {
-		
+
 		var verr validator.ValidationErrors
 
 		if errs.As(err, &verr) {
@@ -51,10 +50,10 @@ func (n rolesHandler) GetRoles(c *gin.Context) {
 	roles, err := n.roleUseCase.Roles()
 
 	if err != nil {
-		c.JSON(errors.GetStatusCode(err),err)
+		c.JSON(errors.GetStatusCode(err), err)
 		return
 	}
-	c.JSON(200,roles)
+	c.JSON(200, roles)
 
 }
 
@@ -64,10 +63,10 @@ func (n rolesHandler) GetRoleByName(c *gin.Context) {
 	r, err := n.roleUseCase.Role(rolename)
 
 	if err != nil {
-		c.JSON(errors.GetStatusCode(err),err)
+		c.JSON(errors.GetStatusCode(err), err)
 		return
 	}
-	c.JSON(200,r)
+	c.JSON(200, r)
 
 }
 
@@ -77,13 +76,12 @@ func (n rolesHandler) AddRole(c *gin.Context) {
 	r, err := n.roleUseCase.StoreRole(rl)
 
 	if err != nil {
-				c.JSON(errors.GetStatusCode(err),err)
+		c.JSON(errors.GetStatusCode(err), err)
 
 		return
 	}
 
-		c.JSON(200,r)
-
+	c.JSON(200, r)
 
 }
 
@@ -93,9 +91,9 @@ func (n rolesHandler) DeleteRole(c *gin.Context) {
 	err := n.roleUseCase.DeleteRole(rolename)
 
 	if err != nil {
-				c.JSON(errors.GetStatusCode(err),err)
+		c.JSON(errors.GetStatusCode(err), err)
 
 		return
 	}
-	c.JSON(200,"User Delted Successfully")
+	c.JSON(200, "User Delted Successfully")
 }
