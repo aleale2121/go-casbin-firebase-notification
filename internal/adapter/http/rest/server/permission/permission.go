@@ -18,6 +18,7 @@ import (
 type PermissionHandler interface {
 	MiddleWareValidatePermission(c *gin.Context)
 	StorePersmision(c *gin.Context)
+	// Persmision(c *gin.Context)
 	DeletePersmision(c *gin.Context)
 	Persmisions(c *gin.Context)
 }
@@ -25,18 +26,19 @@ type PermissionHandler interface {
 // userHandler defines all the things neccessary for users handlers
 type permissionHandler struct {
 	casbinAuth casbin.CasbinAuth
-	trans      ut.Translator
+	trans       ut.Translator
 }
 
 //PermissionInit initializes a user handler for the domin permission
 func PermissionInit(
 	casbinAuth casbin.CasbinAuth,
-	trans ut.Translator,
+	 trans ut.Translator,
 
-) PermissionHandler {
+	 ) PermissionHandler {
 	return &permissionHandler{
 		casbinAuth,
 		trans,
+
 	}
 }
 func (n permissionHandler) MiddleWareValidatePermission(c *gin.Context) {
@@ -57,7 +59,6 @@ func (n permissionHandler) MiddleWareValidatePermission(c *gin.Context) {
 	c.Set("x-permission", permX)
 	c.Next()
 }
-
 // Persmisions gets a list of permissions
 func (uh permissionHandler) Persmisions(c *gin.Context) {
 	permissions := uh.casbinAuth.Policies()
@@ -65,14 +66,15 @@ func (uh permissionHandler) Persmisions(c *gin.Context) {
 }
 func (n permissionHandler) StorePersmision(c *gin.Context) {
 	addP := c.MustGet("x-permission").(model.Permision)
+
 	err := n.casbinAuth.AddPolicy(addP)
 
 	if err != nil {
-		c.JSON(errModel.GetStatusCode(err), err)
+		c.JSON(errModel.GetStatusCode(err),err)
 
 		return
 	}
-	c.JSON(200, addP)
+    c.JSON(200,addP)
 }
 
 // Persmision gets a permission by id
@@ -103,9 +105,9 @@ func (uh permissionHandler) DeletePersmision(c *gin.Context) {
 	err := uh.casbinAuth.RemovePolicy(addP)
 
 	if err != nil {
-		c.JSON(errModel.GetStatusCode(err), err)
+		c.JSON(errModel.GetStatusCode(err),err)
 
 		return
 	}
-	c.JSON(200, addP)
+    c.JSON(200,addP)
 }

@@ -1,9 +1,9 @@
 package role
 
 import (
-	"errors"
 	"template/internal/adapter/storage/persistence"
 	"template/internal/constant/model"
+	err "template/internal/constant/errors"
 )
 
 type UseCase interface {
@@ -53,7 +53,7 @@ func (s service) DeleteRole(name string) error {
 //TODO define error
 func (s service) StoreRole(role model.Role) (*model.Role, error) {
 	if role.Name == "" {
-		return nil, errors.New("")
+		return nil, err.ErrRoleNameISEmpty
 	}
 
 	r, err := s.rolePersistence.StoreRole(role)
