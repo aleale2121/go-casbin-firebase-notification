@@ -2,9 +2,8 @@ package casbin
 
 import (
 	"log"
-	"template/internal/constant/model"
 	"template/internal/constant/errors"
-
+	"template/internal/constant/model"
 
 	"github.com/casbin/casbin/v2"
 )
@@ -45,7 +44,7 @@ func (r *casbinAuthorizer) AddPolicy( cas model.Permision) error{
 		return nil
 	}else{
 		log.Println("not success")
-		return errors.ErrPermissionAlreadyDefined
+		return errors.ErrAccessDenied
 	}
 }
 func (r *casbinAuthorizer) RemovePolicy( cas model.Permision) error{
@@ -66,7 +65,7 @@ func (r *casbinAuthorizer) RemovePolicy( cas model.Permision) error{
 		return nil
 	}else{
 		log.Println("not success")
-		return errors.ErrPermissionPermissionNotFound
+		return errors.ErrAccessDenied
 	}
 }
 func (r *casbinAuthorizer)	Policies() ([]model.Permision){
